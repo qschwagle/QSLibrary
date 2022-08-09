@@ -6,6 +6,7 @@
 #define DRAWING_CVECTOR_H
 
 #include <array>
+#include <initializer_list>
 
 template<int length>
 class CVector;
@@ -36,6 +37,15 @@ public:
     constexpr CVector(const CVector& vec)
     {
         mData = vec.mData;
+    }
+
+    constexpr CVector(std::initializer_list<float> list)
+    {
+        auto list_iter = list.begin();
+        auto data_iter = mData.begin();
+        for(; list_iter != list.end() && data_iter !=  mData.end(); ++list_iter, ++data_iter) {
+            *data_iter = *list_iter;
+        }
     }
 
     constexpr CVector& operator=(const CVector& vec)

@@ -7,6 +7,12 @@ add_subdirectory(linalg)
 
 add_subdirectory(helloworld)
 
+add_subdirectory(cpp_scaffold)
+
+add_subdirectory(argument_parser)
+
+add_subdirectory(string_algorithms)
+
 include(FetchContent)
 FetchContent_Declare(
         googletest

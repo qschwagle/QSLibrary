@@ -5,6 +5,8 @@
 #ifndef DRAWING_CMATRIX_H
 #define DRAWING_CMATRIX_H
 
+#include <initializer_list>
+
 #include "cvector.h"
 
 /**
@@ -16,6 +18,15 @@ public:
 
     CMatrix()=default;
     ~CMatrix()=default;
+
+    CMatrix(std::initializer_list<std::initializer_list<float>> list)
+    {
+        auto data_iter = mData.begin();
+        auto list_iter = list.begin();
+        for(; data_iter != mData.end() && list_iter != list.end(); ++data_iter, ++list_iter) {
+            *data_iter = *list_iter;
+        }
+    }
 
     CMatrix(const CMatrix& m) noexcept
     {
@@ -97,5 +108,20 @@ private:
     std::array<CVector<row>, col> mData;
 };
 
+template<int n>
+CMatrix<n, n> Identity(void)
+{
+    CMatrix<n,n> ret;
+    for(size_t i = 0; i < n; ++i) {
+        for(size_t j = 0; j < n; ++j) {
+            if(i != j) {
+                ret[i][j] = 0.0f;
+            } else {
+                ret[i][j] = 1.0f;
+            }
+        }
+    }
+    return ret;
+}
 
 #endif //DRAWING_CMATRIX_H
