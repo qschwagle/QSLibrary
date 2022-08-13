@@ -3,12 +3,14 @@
 //
 
 #include <iostream>
-
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
+#include <game_tfe/game_2048.h>
 
 int main(int argc, char** argv)
 {
-    std::cout << "2048" << std::endl;
+    Game2048 game;
+    if(game.Init(argc, argv)) {
+        return EXIT_FAILURE;
+    }
+    return game.Run();
 }
 
