@@ -9,9 +9,7 @@ add_subdirectory(helloworld)
 
 add_subdirectory(cpp_scaffold)
 
-add_subdirectory(argument_parser)
-
-add_subdirectory(string_algorithms)
+add_subdirectory(game_tfe)
 
 include(FetchContent)
 FetchContent_Declare(
