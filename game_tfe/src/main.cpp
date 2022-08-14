@@ -8,7 +8,7 @@
 int main(int argc, char** argv)
 {
     Game2048 game;
-    if(game.Init(argc, argv)) {
+    if(!game.Init(argc, argv)) {
         return EXIT_FAILURE;
     }
     return game.Run();

@@ -5,7 +5,12 @@
 #ifndef DRAWING_GAME_2048_H
 #define DRAWING_GAME_2048_H
 
-#include "GLFW/glfw3.h"
+struct GLFWwindow;
+
+struct WindowProperties {
+    int width;
+    int height;
+};
 
 /**
  *  Program class for 2048
@@ -55,7 +60,22 @@ public:
      */
     int Draw();
 
+    /**
+     * retrieves the window properties
+     * \return window properties
+     */
+    WindowProperties& GetWindowProperties(void) noexcept {
+        return mWindowProperties;
+    }
+
 private:
+    void ProcessKeyboardInput(void);
+
+    /// holds window properties
+    WindowProperties mWindowProperties = {
+        .width = 1280,
+        .height = 720
+    };
 
     /// glfw window
     GLFWwindow* mWindow{nullptr};
