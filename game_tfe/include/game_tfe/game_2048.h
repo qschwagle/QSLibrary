@@ -5,6 +5,11 @@
 #ifndef DRAWING_GAME_2048_H
 #define DRAWING_GAME_2048_H
 
+#include <vector>
+
+#include "game_tfe/gl_program.h"
+#include "game_tfe/gl_buffer.h"
+
 struct GLFWwindow;
 
 struct WindowProperties {
@@ -80,6 +85,15 @@ private:
     /// glfw window
     GLFWwindow* mWindow{nullptr};
 
+    /// gl program
+    GLProgram mGLProgram;
+
+    // gl buffer
+    GLBuffer mBuffer;
+
+    std::vector<float> mTriangle = { 0.0, 0.5f, 0.0f,
+                                    -0.5, 0.0f, 0.0f,
+                                    0.5, 0.0f, 0.0f };
 };
 
 #endif //DRAWING_GAME_2048_H
