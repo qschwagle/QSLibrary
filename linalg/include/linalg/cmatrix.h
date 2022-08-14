@@ -6,6 +6,7 @@
 #define DRAWING_CMATRIX_H
 
 #include <initializer_list>
+#include <cstddef>
 
 #include "cvector.h"
 

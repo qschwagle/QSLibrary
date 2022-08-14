@@ -6,6 +6,7 @@
 #define DRAWING_CVECTOR_H
 
 #include <array>
+#include <cstddef>
 #include <initializer_list>
 
 template<int length>
@@ -77,6 +78,7 @@ public:
         return mData[idx];
     }
 
+    /*
     constexpr CVector& operator+(const CVector& rhs)
     {
         for(size_t i = 0; i < length; ++i) {
@@ -92,6 +94,7 @@ public:
         }
         return *this;
     }
+    */
 
     friend constexpr CVector<length> operator*<>(const CVector<length>& lhs, const float scalar);
 

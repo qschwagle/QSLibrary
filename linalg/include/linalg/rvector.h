@@ -79,6 +79,7 @@ public:
     {
         return mData[idx];
     }
+    /*
 
     constexpr RVector& operator+(const RVector& rhs)
     {
@@ -87,7 +88,9 @@ public:
         }
         return *this;
     }
+    */
 
+    /*
     constexpr RVector& operator-(const RVector& rhs)
     {
         for(size_t i = 0; i < length; ++i) {
@@ -95,16 +98,17 @@ public:
         }
         return *this;
     }
+    */
+	
+    friend constexpr RVector<length> operator+<>(const RVector<length>& lhs, const RVector<length>& rhs) noexcept;
+
+    friend constexpr RVector<length> operator-<>(const RVector<length>& lhs, const RVector<length>& rhs) noexcept;
 
     friend constexpr RVector<length> operator*<>(const RVector<length>& lhs, const float scalar);
 
     friend constexpr RVector<length> operator*<>(const float scalar, const RVector<length>& rhs);
 
-    friend constexpr RVector<length> operator+<>(const RVector<length>& lhs, const RVector<length>& rhs) noexcept;
-
-    friend constexpr RVector<length> operator-<>(const RVector<length>& lhs, const RVector<length>& rhs) noexcept;
-
-    friend constexpr float operator*<>(const RVector<length>& lhs, const RVector<length>& rhs) noexcept;
+    friend constexpr float operator*<length>(const RVector<length>& lhs, const RVector<length>& rhs) noexcept;
 
 private:
     /// the vector data
