@@ -96,6 +96,16 @@ public:
     }
     */
 
+    [[nodiscard]] constexpr float* GetData() noexcept
+    {
+        return mData.data();
+    }
+
+    [[nodiscard]] constexpr const float* GetData() const noexcept
+    {
+        return mData.data();
+    }
+
     friend constexpr CVector<length> operator*<>(const CVector<length>& lhs, const float scalar);
 
     friend constexpr CVector<length> operator*<>(const float scalar, const CVector<length>& rhs);

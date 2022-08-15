@@ -13,19 +13,18 @@
 /**
  * Column Matrix
  */
-template<int row, int col>
+template<int col, int row>
 class CMatrix {
 public:
 
     CMatrix()=default;
     ~CMatrix()=default;
 
-    CMatrix(std::initializer_list<std::initializer_list<float>> list)
+    CMatrix(std::initializer_list<float> list)
     {
-        auto data_iter = mData.begin();
         auto list_iter = list.begin();
-        for(; data_iter != mData.end() && list_iter != list.end(); ++data_iter, ++list_iter) {
-            *data_iter = *list_iter;
+        for(size_t i = 0; i < list.size() && i < col * row; ++i, ++list_iter) {
+            mData[i / col][i % col] = *list_iter;
         }
     }
 
@@ -49,6 +48,14 @@ public:
     {
         mData = std::move(m.mData);
         return *this;
+    }
+
+    constexpr int GetCol() const noexcept {
+        return col;
+    }
+
+    constexpr int GetRow() const noexcept {
+        return row;
     }
 
     constexpr CVector<row>& operator[](const size_t idx)
@@ -105,6 +112,16 @@ public:
         }
     }
 
+    constexpr float* GetData() noexcept
+    {
+        return mData[0].GetData();
+    }
+
+    constexpr const float* GetData() const noexcept
+    {
+        return mData[0].GetData();
+    }
+
 private:
     std::array<CVector<row>, col> mData;
 };
@@ -123,6 +140,18 @@ CMatrix<n, n> Identity(void)
         }
     }
     return ret;
+}
+
+inline CMatrix<4, 4> OrthographicProjection(float left, float right, float top, float bottom, float far, float near) {
+
+    CMatrix<4,4> out = {
+        2 / ( right - left ), 0, 0, 0,
+        0, 2 / (top - bottom), 0, 0,
+        0, 0, -2 / (far - near), 0,
+        -(right + left) / (right - left), -(top + bottom) / (top - bottom), -(far + near) / (far - near), 1
+    };
+
+    return out;
 }
 
 #endif //DRAWING_CMATRIX_H

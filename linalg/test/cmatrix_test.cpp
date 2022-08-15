@@ -14,8 +14,8 @@ TEST(CMatrix, Constructor) {
 }
 
 TEST(CMatrix, InitializerList) {
-    CMatrix<2,2> m = { { 2 , 3},
-                       { 4,  5}};
+    CMatrix<2,2> m = { 2 , 3,
+                       4,  5};
     ASSERT_FLOAT_EQ(m[0][0], 2);
     ASSERT_FLOAT_EQ(m[0][1], 3);
     ASSERT_FLOAT_EQ(m[1][0], 4);
