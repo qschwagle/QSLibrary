@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 #include "game_tfe/gl_shader.h"
 
 /**
@@ -62,6 +63,27 @@ class GLProgram {
      * \returns true if successful, false otherwise
      */
     [[nodiscard]] bool UseProgram(void); 
+
+    /**
+     * Handles uniform associated with a GLProgram
+     */
+    class Uniform {
+        public:
+            Uniform(int id) : mId{id} {}
+
+            void SetMat4fv(const float* matrix);
+
+        private:
+            int mId;
+    };
+
+    /**
+     * tries to retrieve a uniform reference from gl program
+     *
+     * \param name name of the uniform
+     * \returns a uniform if found, else nothing
+     */
+    [[nodiscard]] std::optional<Uniform> GetUniform(std::string& name);
 
     private:
 

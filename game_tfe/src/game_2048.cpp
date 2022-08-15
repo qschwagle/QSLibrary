@@ -13,6 +13,7 @@
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include "linalg/rvector.h"
+#include "linalg/cmatrix.h"
 
 /**
  * callback registered on glfw window to respond to window size change events
@@ -83,9 +84,11 @@ bool Game2048::Init(int argc, char **argv)
         #version 330 core
         layout (location = 0) in vec3 aPos;
 
+        uniform mat4 proj;
+
         void main()
         {
-            gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);
+            gl_Position = proj * vec4(aPos.x, aPos.y, aPos.z, 1.0);
         }
     )""";
 
@@ -125,9 +128,15 @@ bool Game2048::Init(int argc, char **argv)
 
     mBuffer.Init();
 
-    mBuffer.LoadData(reinterpret_cast<unsigned char*>(mTriangle.data()), sizeof(float) * mTriangle.size(), GLBuffer::GLUsage::STATIC);
+    mBuffer.LoadData(reinterpret_cast<unsigned char*>(mTriangle2.data()), sizeof(float) * mTriangle2.size(), GLBuffer::GLUsage::STATIC);
 
     mBuffer.SetAttributePointer(0, 3, GLBuffer::GLDataType::FLOAT, 3 * sizeof(float), 0);
+
+    CMatrix<4,4> proj = OrthographicProjection(0, mWindowProperties.width, mWindowProperties.height, 0, 1.0f, 0.0f);
+
+    std::string projection_name = "proj";
+    auto uniform = mGLProgram.GetUniform(projection_name).value();
+    uniform.SetMat4fv(proj.GetData());
 
     return true;
 }

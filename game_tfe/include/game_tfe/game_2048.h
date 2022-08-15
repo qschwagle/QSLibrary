@@ -94,6 +94,12 @@ private:
     std::vector<float> mTriangle = { 0.0, 0.5f, 0.0f,
                                     -0.5, 0.0f, 0.0f,
                                     0.5, 0.0f, 0.0f };
+
+    std::vector<float> mTriangle2 = { 10.0, 60.0f, 0.0f,
+                                      10.0f, 10.0f, 0.0f,
+                                      60.0f, 10.0f, 0.0f };
+
+
 };
 
 #endif //DRAWING_GAME_2048_H

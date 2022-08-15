@@ -62,3 +62,18 @@ bool GLProgram::UseProgram() {
     return true;
 }
 
+std::optional<GLProgram::Uniform> GLProgram::GetUniform(std::string& name)
+{
+    int res = glGetUniformLocation(mId, name.c_str());
+    if(glGetError() != GL_NO_ERROR) {
+        std::cerr << "GLProgram::GetUniform: Error attempting to get uniform: " << name << std::endl;
+        return std::optional<GLProgram::Uniform>();
+    } else {
+        return std::optional<GLProgram::Uniform>(res);
+    }
+}
+
+void GLProgram::Uniform::SetMat4fv(const float* matrix)
+{
+    glUniformMatrix4fv(mId, 1, GL_FALSE, matrix);
+}
