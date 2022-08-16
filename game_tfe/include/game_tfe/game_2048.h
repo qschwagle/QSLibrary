@@ -10,13 +10,9 @@
 #include "game_tfe/gl_program.h"
 #include "game_tfe/gl_buffer.h"
 #include "geometry/geometry.h"
+#include "game_tfe/box_dimension.h"
 
 struct GLFWwindow;
-
-struct WindowProperties {
-    int width;
-    int height;
-};
 
 /**
  *  Program class for 2048
@@ -70,7 +66,7 @@ public:
      * retrieves the window properties
      * \return window properties
      */
-    WindowProperties& GetWindowProperties(void) noexcept {
+    BoxDimension& GetWindowProperties(void) noexcept {
         return mWindowProperties;
     }
 
@@ -78,9 +74,9 @@ private:
     void ProcessKeyboardInput(void);
 
     /// holds window properties
-    WindowProperties mWindowProperties = {
-        .width = 1280,
-        .height = 720
+    BoxDimension mWindowProperties = {
+        .width = 800,
+        .height = 600
     };
 
     /// glfw window

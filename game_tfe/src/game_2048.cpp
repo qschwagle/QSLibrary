@@ -17,17 +17,46 @@
 #include "geometry/geometry.h"
 
 /**
+ * converts from 0-255 int to float 0.0f to 1.0f
+ * \param r red
+ * \param g green
+ * \param b blue
+ * \returns float vector
+ */
+static constexpr RVector<4> ColorIntToFloat(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+{
+    return RVector<4> { r / 255.0f, g / 255.0f, b / 255.0f, a / 255.0f };
+}
+
+/**
+ * returns the left position from center point
+ * \param container_width containers width
+ * \param container_height containers height
+ * \param item_width item width
+ * \param item_height item height
+ * \returns the left coordinate from center
+ */
+static constexpr RVector<3> CenterOriginLeft(float container_width, float container_height, float item_width, float item_height)
+{
+    RVector<3> out;
+    out[0] = (container_width / 2.0f) - (item_width / 2.0f);
+    out[1] = (container_height / 2.0f) - (item_height / 2.0f);
+    out[2] = 0.0f;
+    return out;
+}
+
+/**
  * callback registered on glfw window to respond to window size change events
  * \param window glfw window
  * \param width next width of window
  * \param height next height of window
  */
-void FrameBufferSizeCallback(GLFWwindow* window, int width, int height)
+static void FrameBufferSizeCallback(GLFWwindow* window, int width, int height)
 {
     // just update the view port for right now
     glViewport(0, 0, width, height);
     Game2048* game = static_cast<Game2048*>(glfwGetWindowUserPointer(window));
-    WindowProperties& props = game->GetWindowProperties();
+    auto& props = game->GetWindowProperties();
     props.width = width;
     props.height = height;
 }
@@ -58,7 +87,7 @@ bool Game2048::Init(int argc, char **argv)
 
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    mWindow = glfwCreateWindow(1280, 720, "2048", NULL, NULL);
+    mWindow = glfwCreateWindow(mWindowProperties.width, mWindowProperties.height, "2048", NULL, NULL);
 
     if(!mWindow) {
         std::cerr << "Could not create glfw window. Aborting" << std::endl;
@@ -67,9 +96,7 @@ bool Game2048::Init(int argc, char **argv)
 
     glfwMakeContextCurrent(mWindow);
 
-
     glfwSwapInterval(1);
-
 
     if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cerr << "failed to initialize glad. Aborting" << std::endl;
@@ -78,9 +105,8 @@ bool Game2048::Init(int argc, char **argv)
 
     glfwSetFramebufferSizeCallback(mWindow, &FrameBufferSizeCallback);
     glfwSetWindowUserPointer(mWindow, this);
-    
 
-    glViewport(0,0, 1280, 720);
+    glViewport(0,0, mWindowProperties.width, mWindowProperties.height);
 
     //glfwSwapInterval(1);
 
@@ -135,10 +161,46 @@ bool Game2048::Init(int argc, char **argv)
         return false;
     }
 
-    CreateRectangle3D<7>(mGeometry, RVector<3>{10.0f, 10.0f, 0.0f}, RVector<4>{0.0f, 1.0f, 0.0f, 1.0f}, 100.0f, 100.0f); 
+    RVector<4> board_background = ColorIntToFloat(0xD4, 0xB8, 0x67, 0xFF);
 
-    std::cout << "mGeometry vertices: " << mGeometry.GetVerticesCount() << std::endl;
-    std::cout << "mGeometry indices: " << mGeometry.GetIndicesCount() << std::endl;
+    // we need to find the width and height of the box; adjusted for the margin
+    float game_board_margin = 10.0f;
+    float game_board_dimension = (mWindowProperties.height * 0.75f)< (mWindowProperties.width) ? (mWindowProperties.height * 0.75f) : mWindowProperties.width - game_board_margin;
+    float window_center_x = mWindowProperties.width / 2.0f;
+    float game_board_width_half = game_board_dimension / 2.0f;
+    auto game_board_box_origin = RVector<3>{window_center_x - game_board_width_half, 10.0f, 0.0f};
+    CreateRectangle3D(mGeometry, game_board_box_origin, board_background, game_board_dimension, game_board_dimension);
+
+
+    RVector<4> game_board_square_background = ColorIntToFloat(0xDD, 0xC1, 0x71, 0xFF);
+
+    // divide dimenion by 4 then subtract for margin right and subtract margin left / 4
+    float game_square_width = (game_board_dimension / 4.0f) - 10.0f - 2.50f;
+
+    RVector<3> game_board_square_margin_right = {10.0f + game_square_width, 0.0f, 0.0f};
+    RVector<3> game_board_square_margin_bottom = {0.0f, 10.0f + game_square_width, 0.0f};
+    RVector<4> BLUE = RVector<4>{0.0f, 0.0f, 1.0f, 1.0f};
+
+    auto game_board_square_origin = game_board_box_origin + RVector<3> { 10.0f, 10.0f, 0.0f };
+    for(size_t i = 0; i < 4; ++i) {
+        auto going_left = game_board_square_origin;
+        for(size_t j = 0; j < 4; ++j) {
+            CreateRectangle3D(mGeometry, going_left, game_board_square_background, game_square_width, game_square_width);
+            going_left = going_left + game_board_square_margin_right;
+        }
+        game_board_square_origin = game_board_square_origin + game_board_square_margin_bottom;
+    }
+
+    RVector<4> green { 0.0f, 1.0f, 0.0f, 1.0f };
+    RVector<4> blue { 0.0f, 0.0f, 1.0f, 1.0f };
+
+    auto game_board_box_end = game_board_box_origin + RVector<3>{ game_board_dimension, 0.0f, 0.0f };
+
+    CreateRectangle3D(mGeometry, game_board_box_origin + RVector<3> {0.0f, static_cast<float>(mWindowProperties.height) - 125.0f, 0.0f}, green, 175.0f, 75.0f);
+
+    CreateRectangle3D(mGeometry, game_board_box_end + RVector<3> { -210.0f, static_cast<float>(mWindowProperties.height) - 75.0f, 0.0f}, blue, 100.0f, 50.0f);
+
+    CreateRectangle3D(mGeometry, game_board_box_end + RVector<3> { -100.0f, static_cast<float>(mWindowProperties.height) - 75.0f, 0.0f}, blue, 100.0f, 50.0f);
 
     mBuffer.Init();
 
@@ -158,8 +220,7 @@ bool Game2048::Init(int argc, char **argv)
 
 int Game2048::Run()
 {
-    RVector<4> color = { 1.0f, 0.0f, 0.0f, 1.0f };
-
+    RVector<4> color = ColorIntToFloat(0xFA, 0xF8, 0xEF, 0xFF);
 
     while(!glfwWindowShouldClose(mWindow)) {
         ProcessKeyboardInput();
