@@ -14,8 +14,6 @@ void GLProgram::AddVertexShader(std::shared_ptr<GLShader> shader)
     mVertexShader = shader;
 }
 
-
-
 void GLProgram::AddFragmentShader(std::shared_ptr<GLShader> shader)
 {
     mFragmentShader = shader;

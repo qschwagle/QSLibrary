@@ -44,12 +44,14 @@ public:
     /**
      * loads data pointer to data into buffer with the provided usage
      *
-     * \param data data to be loaded
-     * \param size size of the data
+     * \param v_data vertex data
+     * \param v_data_size vertex data size
+     * \param e_data element indicies data
+     * \param e_data_size indicies size
      * \param usage usage
      * \returns true if successful, false otherwise
      */
-    bool LoadData(unsigned char* data, size_t size, GLUsage usage);
+    bool LoadData(unsigned char* v_data, size_t v_data_size, unsigned int* e_data, size_t e_data_size, GLUsage usage);
 
     /**
      * Sets the attrib pointer
@@ -76,6 +78,9 @@ private:
 
     /// buffer id
     unsigned int mBufferId{0};
+
+    /// element buffer id
+    unsigned int mElementBufferId{0};
 
     /// Vertex Array Object id
     unsigned int mVertexArrayObjectId{0};

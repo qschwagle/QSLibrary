@@ -14,6 +14,7 @@
 #include "GLFW/glfw3.h"
 #include "linalg/rvector.h"
 #include "linalg/cmatrix.h"
+#include "geometry/geometry.h"
 
 /**
  * callback registered on glfw window to respond to window size change events
@@ -67,6 +68,9 @@ bool Game2048::Init(int argc, char **argv)
     glfwMakeContextCurrent(mWindow);
 
 
+    glfwSwapInterval(1);
+
+
     if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cerr << "failed to initialize glad. Aborting" << std::endl;
         return false;
@@ -83,21 +87,26 @@ bool Game2048::Init(int argc, char **argv)
     std::string vertex_shader_src = R"""(
         #version 330 core
         layout (location = 0) in vec3 aPos;
+        layout (location = 1) in vec4 aColor;
+
+        out vec4 Color;
 
         uniform mat4 proj;
 
         void main()
         {
             gl_Position = proj * vec4(aPos.x, aPos.y, aPos.z, 1.0);
+            Color = aColor;
         }
     )""";
 
     std::string fragment_shader_src = R"""(
         #version 330 core
+        in  vec4 Color;
         out vec4 FragColor;
         void main()
         {
-            FragColor = vec4(0.0f, 1.0f, 0.0f, 1.0f);
+            FragColor = Color;
         }
     )""";
 
@@ -126,11 +135,17 @@ bool Game2048::Init(int argc, char **argv)
         return false;
     }
 
+    CreateRectangle3D<7>(mGeometry, RVector<3>{10.0f, 10.0f, 0.0f}, RVector<4>{0.0f, 1.0f, 0.0f, 1.0f}, 100.0f, 100.0f); 
+
+    std::cout << "mGeometry vertices: " << mGeometry.GetVerticesCount() << std::endl;
+    std::cout << "mGeometry indices: " << mGeometry.GetIndicesCount() << std::endl;
+
     mBuffer.Init();
 
-    mBuffer.LoadData(reinterpret_cast<unsigned char*>(mTriangle2.data()), sizeof(float) * mTriangle2.size(), GLBuffer::GLUsage::STATIC);
+    mBuffer.LoadData(reinterpret_cast<unsigned char*>(mGeometry.GetVerticesPointer()), sizeof(float) * mGeometry.GetVerticesCount()*7, mGeometry.GetIndicesPointer(), mGeometry.GetIndicesCount() * sizeof(unsigned int), GLBuffer::GLUsage::STATIC);
 
-    mBuffer.SetAttributePointer(0, 3, GLBuffer::GLDataType::FLOAT, 3 * sizeof(float), 0);
+    mBuffer.SetAttributePointer(0, 3, GLBuffer::GLDataType::FLOAT, 7 * sizeof(float), 0);
+    mBuffer.SetAttributePointer(1, 4, GLBuffer::GLDataType::FLOAT, 7 * sizeof(float), reinterpret_cast<void*>(sizeof(float)*3));
 
     CMatrix<4,4> proj = OrthographicProjection(0, mWindowProperties.width, mWindowProperties.height, 0, 1.0f, 0.0f);
 
@@ -145,14 +160,12 @@ int Game2048::Run()
 {
     RVector<4> color = { 1.0f, 0.0f, 0.0f, 1.0f };
 
-    //glfwSwapInterval(1);
 
     while(!glfwWindowShouldClose(mWindow)) {
         ProcessKeyboardInput();
 
         glClearColor(color[0], color[1], color[2], color[3]);
         glClear(GL_COLOR_BUFFER_BIT);
-
 
         (void) mGLProgram.UseProgram();
         (void) mBuffer.BindVertexArrayObject();
@@ -168,7 +181,7 @@ int Game2048::Run()
 
 int Game2048::Draw()
 {
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawElements(GL_TRIANGLES, mGeometry.GetIndicesCount(), GL_UNSIGNED_INT, 0);
     return 0;
 }
 
