@@ -99,6 +99,16 @@ public:
         return *this;
     }
     */
+
+    [[nodiscard]] constexpr float* GetData() noexcept
+    {
+        return mData.data();
+    }
+
+    [[nodiscard]] constexpr const float* GetData() const noexcept
+    {
+        return mData.data();
+    }
 	
     friend constexpr RVector<length> operator+<>(const RVector<length>& lhs, const RVector<length>& rhs) noexcept;
 

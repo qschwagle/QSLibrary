@@ -9,6 +9,7 @@
 
 #include "game_tfe/gl_program.h"
 #include "game_tfe/gl_buffer.h"
+#include "geometry/geometry.h"
 
 struct GLFWwindow;
 
@@ -91,14 +92,8 @@ private:
     // gl buffer
     GLBuffer mBuffer;
 
-    std::vector<float> mTriangle = { 0.0, 0.5f, 0.0f,
-                                    -0.5, 0.0f, 0.0f,
-                                    0.5, 0.0f, 0.0f };
-
-    std::vector<float> mTriangle2 = { 10.0, 60.0f, 0.0f,
-                                      10.0f, 10.0f, 0.0f,
-                                      60.0f, 10.0f, 0.0f };
-
+    // vertices and indicies to be rendered
+    Geometry<7> mGeometry;
 
 };
 
