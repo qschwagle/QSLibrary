@@ -60,6 +60,9 @@ public:
         for(; list_iter != list.end() && data_iter != mData.end(); ++list_iter, ++data_iter) {
             *data_iter = *list_iter;
         }
+        for(; data_iter != mData.end(); ++data_iter) {
+            *data_iter = 0.0f;
+        }
     }
 
     constexpr RVector& operator=(const RVector&& rhs) noexcept
