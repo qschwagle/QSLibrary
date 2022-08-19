@@ -32,6 +32,14 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(glfw)
 
+FetchContent_Declare(
+    freetype
+    GIT_REPOSITORY https://github.com/freetype/freetype.git
+    GIT_TAG e8ebfe988b5f57bfb9a3ecb13c70d9791bce9ecf
+)
+
+FetchContent_MakeAvailable(freetype)
+
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)

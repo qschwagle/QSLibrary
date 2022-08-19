@@ -9,12 +9,14 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <fstream>
 
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
 #include "linalg/rvector.h"
 #include "linalg/cmatrix.h"
 #include "geometry/geometry.h"
+#include "game_tfe/text.h"
 
 /**
  * converts from 0-255 int to float 0.0f to 1.0f
@@ -108,14 +110,14 @@ bool Game2048::Init(int argc, char **argv)
 
     glViewport(0,0, mWindowProperties.width, mWindowProperties.height);
 
-    //glfwSwapInterval(1);
-
     std::string vertex_shader_src = R"""(
         #version 330 core
         layout (location = 0) in vec3 aPos;
         layout (location = 1) in vec4 aColor;
+        layout (location = 2) in vec2 aTexCoord;
 
         out vec4 Color;
+        out vec2 TexCoord;
 
         uniform mat4 proj;
 
@@ -123,16 +125,29 @@ bool Game2048::Init(int argc, char **argv)
         {
             gl_Position = proj * vec4(aPos.x, aPos.y, aPos.z, 1.0);
             Color = aColor;
+            TexCoord = aTexCoord;
         }
     )""";
 
     std::string fragment_shader_src = R"""(
         #version 330 core
-        in  vec4 Color;
+        in vec4 Color;
+        in vec2 TexCoord;
+
+        uniform sampler2D Texture;
+
         out vec4 FragColor;
+
         void main()
         {
-            FragColor = Color;
+            if(TexCoord[0] == TexCoord[1]) {
+                // if they are the same, we are not using the texture
+                FragColor = Color;
+            } else {
+                //FragColor = texture(Texture, TexCoord) * Color;
+                vec4 sampled = vec4(1.0, 1.0, 1.0, texture(Texture, TexCoord).r);
+                FragColor = Color * sampled;
+            }
         }
     )""";
 
@@ -161,6 +176,8 @@ bool Game2048::Init(int argc, char **argv)
         return false;
     }
 
+    mGeometry.CreateTextureAtlas(1000, 1000, sizeof(unsigned char));
+
     RVector<4> board_background = ColorIntToFloat(0xD4, 0xB8, 0x67, 0xFF);
 
     // we need to find the width and height of the box; adjusted for the margin
@@ -170,7 +187,6 @@ bool Game2048::Init(int argc, char **argv)
     float game_board_width_half = game_board_dimension / 2.0f;
     auto game_board_box_origin = RVector<3>{window_center_x - game_board_width_half, 10.0f, 0.0f};
     CreateRectangle3D(mGeometry, game_board_box_origin, board_background, game_board_dimension, game_board_dimension);
-
 
     RVector<4> game_board_square_background = ColorIntToFloat(0xDD, 0xC1, 0x71, 0xFF);
 
@@ -195,19 +211,41 @@ bool Game2048::Init(int argc, char **argv)
     RVector<4> blue { 0.0f, 0.0f, 1.0f, 1.0f };
 
     auto game_board_box_end = game_board_box_origin + RVector<3>{ game_board_dimension, 0.0f, 0.0f };
+    std::string TITLE_2048 = "2048";
 
-    CreateRectangle3D(mGeometry, game_board_box_origin + RVector<3> {0.0f, static_cast<float>(mWindowProperties.height) - 125.0f, 0.0f}, green, 175.0f, 75.0f);
+    DrawText(mGeometry, game_board_box_origin + RVector<3> {0.0f, static_cast<float>(mWindowProperties.height) - 125.0f, 0.0f}, green, 175.0f, 75.0f, TITLE_2048, 16, mWindowProperties.width, mWindowProperties.height);
 
-    CreateRectangle3D(mGeometry, game_board_box_end + RVector<3> { -210.0f, static_cast<float>(mWindowProperties.height) - 75.0f, 0.0f}, blue, 100.0f, 50.0f);
+    std::string SCORE = "SCORE";
 
-    CreateRectangle3D(mGeometry, game_board_box_end + RVector<3> { -100.0f, static_cast<float>(mWindowProperties.height) - 75.0f, 0.0f}, blue, 100.0f, 50.0f);
+    DrawText(mGeometry, game_board_box_end + RVector<3> { -210.0f, static_cast<float>(mWindowProperties.height) - 75.0f, 0.0f}, blue, 100.0f, 50.0f, SCORE, 10, mWindowProperties.width, mWindowProperties.height);
+
+    std::string BEST = "BEST";
+
+    DrawText(mGeometry, game_board_box_end + RVector<3> { -100.0f, static_cast<float>(mWindowProperties.height) - 75.0f, 0.0f}, blue, 100.0f, 50.0f, BEST, 10, mWindowProperties.width, mWindowProperties.height);
 
     mBuffer.Init();
 
-    mBuffer.LoadData(reinterpret_cast<unsigned char*>(mGeometry.GetVerticesPointer()), sizeof(float) * mGeometry.GetVerticesCount()*7, mGeometry.GetIndicesPointer(), mGeometry.GetIndicesCount() * sizeof(unsigned int), GLBuffer::GLUsage::STATIC);
+    size_t s = mGeometry.GetVertexSize();
 
-    mBuffer.SetAttributePointer(0, 3, GLBuffer::GLDataType::FLOAT, 7 * sizeof(float), 0);
-    mBuffer.SetAttributePointer(1, 4, GLBuffer::GLDataType::FLOAT, 7 * sizeof(float), reinterpret_cast<void*>(sizeof(float)*3));
+    mBuffer.LoadData(reinterpret_cast<unsigned char*>(mGeometry.GetVerticesPointer()), mGeometry.GetVerticesByteSize(), mGeometry.GetIndicesPointer(), mGeometry.GetIndicesCount() * sizeof(unsigned int), GLBuffer::GLUsage::STATIC);
+
+    /*
+    unsigned char* atlas = mGeometry.GetAtlas()->GetData();
+    std::fstream fout{"test.ppm", std::ios::openmode::_S_bin | std::ios::openmode::_S_out};
+    fout << "P6\n" << mGeometry.GetAtlas()->GetWidth() << " " << mGeometry.GetAtlas()->GetHeight() << "\n255\n";
+    for(size_t i = 0; i < mGeometry.GetAtlas()->GetWidth()* mGeometry.GetAtlas()->GetHeight(); ++i) {
+        if(i < 10) std::cout << static_cast<int>(atlas[i]) << std::endl;
+        fout << (unsigned char) (atlas[i]*255);
+        fout << (unsigned char) 0;
+        fout << (unsigned char) 0;
+    }
+    */
+
+    mBuffer.LoadTextureRed(mGeometry.GetAtlas()->GetData(), mGeometry.GetAtlas()->GetWidth(), mGeometry.GetAtlas()->GetHeight());
+
+    mBuffer.SetAttributePointer(0, 3, GLBuffer::GLDataType::FLOAT, 9 * sizeof(float), 0);
+    mBuffer.SetAttributePointer(1, 4, GLBuffer::GLDataType::FLOAT, 9 * sizeof(float), reinterpret_cast<void*>(sizeof(float)*3));
+    mBuffer.SetAttributePointer(2, 2, GLBuffer::GLDataType::FLOAT, 9 * sizeof(float), reinterpret_cast<void*>(sizeof(float)*7));
 
     CMatrix<4,4> proj = OrthographicProjection(0, mWindowProperties.width, mWindowProperties.height, 0, 1.0f, 0.0f);
 
@@ -234,8 +272,8 @@ int Game2048::Run()
         Draw();
 
         glfwSwapBuffers(mWindow);
-        //glfwWaitEventsTimeout(0.0001);
-        glfwWaitEvents();
+
+        glfwWaitEventsTimeout(0.0001);
     }
     return 0;
 }

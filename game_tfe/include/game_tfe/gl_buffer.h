@@ -71,10 +71,23 @@ public:
      */
     bool BindVertexArrayObject();
 
+    /**
+     * Load an RGB Texture into buffer
+     */
+    void LoadTextureRGB(unsigned char* texture_data, int width, int height);
+
+    /**
+     * Load a single byte Texture into buffer
+     */
+    void LoadTextureRed(unsigned char* texture_data, int width, int height);
+
 private:
 
     /// has created buffer
     bool mHasCreatedBuffer{false};
+
+    /// has generated Texture
+    bool mHasGenTexture{false};
 
     /// buffer id
     unsigned int mBufferId{0};
@@ -84,4 +97,7 @@ private:
 
     /// Vertex Array Object id
     unsigned int mVertexArrayObjectId{0};
+
+    /// texture id
+    unsigned int mTextureId{0};
 };
