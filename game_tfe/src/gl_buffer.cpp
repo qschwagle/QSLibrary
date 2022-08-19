@@ -4,6 +4,10 @@
 
 GLBuffer::~GLBuffer()
 {
+    if(glGenTextures) {
+        glDeleteTextures(1, &mTextureId);
+    }
+
     if(mHasCreatedBuffer) { 
         glDeleteBuffers(1, &mElementBufferId);
         glDeleteBuffers(1, &mBufferId);
@@ -58,6 +62,52 @@ bool GLBuffer::SetAttributePointer(unsigned int index, int size, GLDataType type
 
 bool GLBuffer::BindVertexArrayObject()
 {
+    if(mHasGenTexture) glBindTexture(GL_TEXTURE_2D, mTextureId);
     glBindVertexArray(mVertexArrayObjectId);
     return true;
 }
+
+void GLBuffer::LoadTextureRGB(unsigned char * texture_data, int width, int height)
+{
+    if(glGenTextures) {
+        glDeleteTextures(1, &mTextureId);
+    }
+    glGenTextures(1, &mTextureId);
+
+    glBindTexture(GL_TEXTURE_2D, mTextureId);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, texture_data);
+
+}
+
+void GLBuffer::LoadTextureRed(unsigned char * texture_data, int width, int height)
+{
+
+    if(glGenTextures) {
+        glDeleteTextures(1, &mTextureId);
+    }
+    glGenTextures(1, &mTextureId);
+
+    glBindTexture(GL_TEXTURE_2D, mTextureId);
+
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, texture_data);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+}
+

@@ -89,7 +89,7 @@ private:
     GLBuffer mBuffer;
 
     // vertices and indicies to be rendered
-    Geometry<7> mGeometry;
+    Geometry<9> mGeometry;
 
 };
 
