@@ -65,16 +65,23 @@ static void FrameBufferSizeCallback(GLFWwindow* window, int width, int height)
     props.height = height;
 }
 
+/**
+ * callback registered on glfw window to respond to keyboard input
+ * \param key keyboard key
+ * \param scancode scancode
+ * \param action action
+ * \param mods mods
+ */
+static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    Game2048* game = static_cast<Game2048*>(glfwGetWindowUserPointer(window));
+    game->ProcessKeyboardInput(key, scancode, action, mods);
+}
+
 Game2048::Game2048()
 {
 
-    std::srand(std::time(0));
-    int rand_1 = std::rand() % 16;
-    int rand_2;
-    while((rand_2 = std::rand() % 16) == rand_1);
-    mGameSquares[rand_1] = std::move(GameSquare(2));
-    mGameSquares[rand_2] = std::move(GameSquare(2));
-}
+ }
 
 Game2048::~Game2048() noexcept
 {
@@ -115,6 +122,7 @@ bool Game2048::Init(int argc, char **argv)
 
     glfwSetFramebufferSizeCallback(mWindow, &FrameBufferSizeCallback);
     glfwSetWindowUserPointer(mWindow, this);
+    glfwSetKeyCallback(mWindow, &KeyCallback);
 
     glViewport(0,0, mWindowProperties.width, mWindowProperties.height);
 
@@ -184,92 +192,6 @@ bool Game2048::Init(int argc, char **argv)
         return false;
     }
 
-    mGeometry.CreateTextureAtlas(5000, 5000, sizeof(unsigned char));
-
-    RVector<4> board_background = ColorIntToFloat(0xD4, 0xB8, 0x67, 0xFF);
-
-    // we need to find the width and height of the box; adjusted for the margin
-    float game_board_margin = 10.0f;
-    float game_board_dimension = (mWindowProperties.height * 0.75f)< (mWindowProperties.width) ? (mWindowProperties.height * 0.75f) : mWindowProperties.width - game_board_margin;
-    float window_center_x = mWindowProperties.width / 2.0f;
-    float game_board_width_half = game_board_dimension / 2.0f;
-    auto game_board_box_origin = RVector<3>{window_center_x - game_board_width_half, 10.0f, 0.0f};
-    CreateRectangle3D(mGeometry, game_board_box_origin, board_background, game_board_dimension, game_board_dimension);
-
-    RVector<4> game_board_square_background = ColorIntToFloat(0xDD, 0xC1, 0x71, 0xFF);
-
-    // divide dimenion by 4 then subtract for margin right and subtract margin left / 4
-    float game_square_width = (game_board_dimension / 4.0f) - 10.0f - 2.50f;
-
-    RVector<3> game_board_square_margin_right = {10.0f + game_square_width, 0.0f, 0.0f};
-    RVector<3> game_board_square_margin_bottom = {0.0f, 10.0f + game_square_width, 0.0f};
-    RVector<4> BLUE = RVector<4>{0.0f, 0.0f, 1.0f, 1.0f};
-
-    auto game_board_square_origin = game_board_box_origin + RVector<3> { 10.0f, 10.0f, 0.0f };
-    for(size_t i = 0; i < 4; ++i) {
-        auto going_left = game_board_square_origin;
-        for(size_t j = 0; j < 4; ++j) {
-            CreateRectangle3D(mGeometry, going_left, game_board_square_background, game_square_width, game_square_width);
-            mGameSquares[i*4+j].SetPosition(RVector<2> {going_left[0], going_left[1]});
-            mGameSquares[i*4+j].Draw(mGeometry, game_square_width);
-            going_left = going_left + game_board_square_margin_right;
-        }
-        game_board_square_origin = game_board_square_origin + game_board_square_margin_bottom;
-    }
-
-    RVector<4> green { 0.0f, 1.0f, 0.0f, 1.0f };
-    RVector<4> blue { 0.0f, 0.0f, 1.0f, 1.0f };
-
-    float window_scale_x, window_scale_y;
-    glfwGetWindowContentScale(mWindow, &window_scale_x, &window_scale_y);
-    std::cout << "Content Scale: " << window_scale_x << ", " << window_scale_y << std::endl;
-    unsigned int window_scale_x_int = window_scale_x * 100;
-    unsigned int window_scale_y_int = window_scale_y * 100;
-
-
-    auto game_board_box_end = game_board_box_origin + RVector<3>{ game_board_dimension, 0.0f, 0.0f };
-    std::string TITLE_2048 = "2048";
-
-    DrawText(mGeometry, nullptr, game_board_box_origin + RVector<3> {0.0f, static_cast<float>(mWindowProperties.height) - 125.0f, 0.0f}, green, TITLE_2048, 48, window_scale_x_int, window_scale_y_int);
-
-    std::string SCORE = "SCORE";
-
-    DrawText(mGeometry, nullptr, game_board_box_end + RVector<3> { -210.0f, static_cast<float>(mWindowProperties.height) - 75.0f, 0.0f}, blue, SCORE, 18, window_scale_x_int, window_scale_y_int);
-
-    std::string BEST = "BEST";
-
-    DrawText(mGeometry, nullptr, game_board_box_end + RVector<3> { -100.0f, static_cast<float>(mWindowProperties.height) - 75.0f, 0.0f}, blue, BEST, 18, window_scale_x_int, window_scale_y_int);
-
-    mBuffer.Init();
-
-    size_t s = mGeometry.GetVertexSize();
-
-    mBuffer.LoadData(reinterpret_cast<unsigned char*>(mGeometry.GetVerticesPointer()), mGeometry.GetVerticesByteSize(), mGeometry.GetIndicesPointer(), mGeometry.GetIndicesCount() * sizeof(unsigned int), GLBuffer::GLUsage::STATIC);
-
-    /*
-    unsigned char* atlas = mGeometry.GetAtlas()->GetData();
-    std::fstream fout{"test.ppm", std::ios::openmode::_S_bin | std::ios::openmode::_S_out};
-    fout << "P6\n" << mGeometry.GetAtlas()->GetWidth() << " " << mGeometry.GetAtlas()->GetHeight() << "\n255\n";
-    for(size_t i = 0; i < mGeometry.GetAtlas()->GetWidth()* mGeometry.GetAtlas()->GetHeight(); ++i) {
-        if(i < 10) std::cout << static_cast<int>(atlas[i]) << std::endl;
-        fout << (unsigned char) (atlas[i]*255);
-        fout << (unsigned char) 0;
-        fout << (unsigned char) 0;
-    }
-    */
-
-    mBuffer.LoadTextureRed(mGeometry.GetAtlas()->GetData(), mGeometry.GetAtlas()->GetWidth(), mGeometry.GetAtlas()->GetHeight());
-
-    mBuffer.SetAttributePointer(0, 3, GLBuffer::GLDataType::FLOAT, 9 * sizeof(float), 0);
-    mBuffer.SetAttributePointer(1, 4, GLBuffer::GLDataType::FLOAT, 9 * sizeof(float), reinterpret_cast<void*>(sizeof(float)*3));
-    mBuffer.SetAttributePointer(2, 2, GLBuffer::GLDataType::FLOAT, 9 * sizeof(float), reinterpret_cast<void*>(sizeof(float)*7));
-
-    CMatrix<4,4> proj = OrthographicProjection(0, mWindowProperties.width, mWindowProperties.height, 0, 1.0f, 0.0f);
-
-    std::string projection_name = "proj";
-    auto uniform = mGLProgram.GetUniform(projection_name).value();
-    uniform.SetMat4fv(proj.GetData());
-
     return true;
 }
 
@@ -278,7 +200,81 @@ int Game2048::Run()
     RVector<4> color = ColorIntToFloat(0xFA, 0xF8, 0xEF, 0xFF);
 
     while(!glfwWindowShouldClose(mWindow)) {
-        ProcessKeyboardInput();
+
+        mGeometry.CreateTextureAtlas(5000, 5000, sizeof(unsigned char));
+
+        RVector<4> board_background = ColorIntToFloat(0xD4, 0xB8, 0x67, 0xFF);
+
+        // we need to find the width and height of the box; adjusted for the margin
+        float game_board_margin = 10.0f;
+        float game_board_dimension = (mWindowProperties.height * 0.75f)< (mWindowProperties.width) ? (mWindowProperties.height * 0.75f) : mWindowProperties.width - game_board_margin;
+        float window_center_x = mWindowProperties.width / 2.0f;
+        float game_board_width_half = game_board_dimension / 2.0f;
+        auto game_board_box_origin = RVector<3>{window_center_x - game_board_width_half, 10.0f, 0.0f};
+        CreateRectangle3D(mGeometry, game_board_box_origin, board_background, game_board_dimension, game_board_dimension);
+
+        RVector<4> game_board_square_background = ColorIntToFloat(0xDD, 0xC1, 0x71, 0xFF);
+
+        // divide dimenion by 4 then subtract for margin right and subtract margin left / 4
+        float game_square_width = (game_board_dimension / 4.0f) - 10.0f - 2.50f;
+
+        RVector<3> game_board_square_margin_right = {10.0f + game_square_width, 0.0f, 0.0f};
+        RVector<3> game_board_square_margin_bottom = {0.0f, 10.0f + game_square_width, 0.0f};
+        RVector<4> BLUE = RVector<4>{0.0f, 0.0f, 1.0f, 1.0f};
+
+        mBoard.Draw(mGeometry, game_board_box_origin, game_board_dimension);
+
+        RVector<4> green { 0.0f, 1.0f, 0.0f, 1.0f };
+        RVector<4> blue { 0.0f, 0.0f, 1.0f, 1.0f };
+
+        float window_scale_x, window_scale_y;
+        glfwGetWindowContentScale(mWindow, &window_scale_x, &window_scale_y);
+        unsigned int window_scale_x_int = window_scale_x * 100;
+        unsigned int window_scale_y_int = window_scale_y * 100;
+
+        auto game_board_box_end = game_board_box_origin + RVector<3>{ game_board_dimension, 0.0f, 0.0f };
+        std::string TITLE_2048 = "2048";
+
+        DrawText(mGeometry, nullptr, game_board_box_origin + RVector<3> {0.0f, static_cast<float>(mWindowProperties.height) - 125.0f, 0.0f}, green, TITLE_2048, 48, window_scale_x_int, window_scale_y_int);
+
+        std::string SCORE = "SCORE";
+
+        DrawText(mGeometry, nullptr, game_board_box_end + RVector<3> { -210.0f, static_cast<float>(mWindowProperties.height) - 75.0f, 0.0f}, blue, SCORE, 18, window_scale_x_int, window_scale_y_int);
+
+        std::string BEST = "BEST";
+
+        DrawText(mGeometry, nullptr, game_board_box_end + RVector<3> { -100.0f, static_cast<float>(mWindowProperties.height) - 75.0f, 0.0f}, blue, BEST, 18, window_scale_x_int, window_scale_y_int);
+
+        mBuffer.Init();
+
+        size_t s = mGeometry.GetVertexSize();
+
+        mBuffer.LoadData(reinterpret_cast<unsigned char*>(mGeometry.GetVerticesPointer()), mGeometry.GetVerticesByteSize(), mGeometry.GetIndicesPointer(), mGeometry.GetIndicesCount() * sizeof(unsigned int), GLBuffer::GLUsage::DYNAMIC);
+
+        /*
+        unsigned char* atlas = mGeometry.GetAtlas()->GetData();
+        std::fstream fout{"test.ppm", std::ios::openmode::_S_bin | std::ios::openmode::_S_out};
+        fout << "P6\n" << mGeometry.GetAtlas()->GetWidth() << " " << mGeometry.GetAtlas()->GetHeight() << "\n255\n";
+        for(size_t i = 0; i < mGeometry.GetAtlas()->GetWidth()* mGeometry.GetAtlas()->GetHeight(); ++i) {
+            if(i < 10) std::cout << static_cast<int>(atlas[i]) << std::endl;
+            fout << (unsigned char) (atlas[i]*255);
+            fout << (unsigned char) 0;
+            fout << (unsigned char) 0;
+        }
+        */
+
+        mBuffer.LoadTextureRed(mGeometry.GetAtlas()->GetData(), mGeometry.GetAtlas()->GetWidth(), mGeometry.GetAtlas()->GetHeight());
+
+        mBuffer.SetAttributePointer(0, 3, GLBuffer::GLDataType::FLOAT, 9 * sizeof(float), 0);
+        mBuffer.SetAttributePointer(1, 4, GLBuffer::GLDataType::FLOAT, 9 * sizeof(float), reinterpret_cast<void*>(sizeof(float)*3));
+        mBuffer.SetAttributePointer(2, 2, GLBuffer::GLDataType::FLOAT, 9 * sizeof(float), reinterpret_cast<void*>(sizeof(float)*7));
+
+        CMatrix<4,4> proj = OrthographicProjection(0, mWindowProperties.width, mWindowProperties.height, 0, 1.0f, 0.0f);
+
+        std::string projection_name = "proj";
+        auto uniform = mGLProgram.GetUniform(projection_name).value();
+        uniform.SetMat4fv(proj.GetData());
+
 
         glClearColor(color[0], color[1], color[2], color[3]);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -287,6 +283,8 @@ int Game2048::Run()
         (void) mBuffer.BindVertexArrayObject();
 
         Draw();
+
+        mGeometry.Clear();
 
         glfwSwapBuffers(mWindow);
 
@@ -326,10 +324,29 @@ int Game2048::Draw()
     return 0;
 }
 
-void Game2048::ProcessKeyboardInput()
+void Game2048::ProcessKeyboardInput(int key, int scancode, int action, int mods)
 {
-    if(glfwGetKey(mWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+    if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(mWindow, true);
     }
+
+    if(key ==  GLFW_KEY_W && action == GLFW_PRESS || key == GLFW_KEY_UP && action == GLFW_PRESS) {
+        std::cout << "UP" << std::endl;
+        mBoard.Move(GameBoard::MoveDirection::UP);
+    }
+
+    if(key == GLFW_KEY_S && action == GLFW_PRESS || key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
+        std::cout << "DOWN" << std::endl;
+        mBoard.Move(GameBoard::MoveDirection::DOWN);
+    }
+
+    if(key == GLFW_KEY_A && action == GLFW_PRESS || key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
+        std::cout << "LEFT" << std::endl;
+    }
+
+    if(key == GLFW_KEY_D && action == GLFW_PRESS || key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
+        std::cout << "RIGHT" << std::endl;
+    }
 }
+
 

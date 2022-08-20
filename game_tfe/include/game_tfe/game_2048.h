@@ -12,6 +12,7 @@
 #include "geometry/geometry.h"
 #include "game_tfe/box_dimension.h"
 #include "game_tfe/game_square.h"
+#include "game_tfe/game_board.h"
 
 struct GLFWwindow;
 
@@ -71,8 +72,9 @@ public:
         return mWindowProperties;
     }
 
+    void ProcessKeyboardInput(int key, int scancode, int action, int mods);
+
 private:
-    void ProcessKeyboardInput(void);
 
     /// holds window properties
     BoxDimension mWindowProperties = {
@@ -92,8 +94,8 @@ private:
     // vertices and indicies to be rendered
     Geometry<9> mGeometry;
 
-    /// the game board
-    std::array<GameSquare, 16> mGameSquares;
+    /// game board
+    GameBoard mBoard;
 };
 
 #endif //DRAWING_GAME_2048_H
