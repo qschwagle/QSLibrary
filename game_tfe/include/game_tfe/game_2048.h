@@ -11,6 +11,7 @@
 #include "game_tfe/gl_buffer.h"
 #include "geometry/geometry.h"
 #include "game_tfe/box_dimension.h"
+#include "game_tfe/game_square.h"
 
 struct GLFWwindow;
 
@@ -91,6 +92,8 @@ private:
     // vertices and indicies to be rendered
     Geometry<9> mGeometry;
 
+    /// the game board
+    std::array<GameSquare, 16> mGameSquares;
 };
 
 #endif //DRAWING_GAME_2048_H
