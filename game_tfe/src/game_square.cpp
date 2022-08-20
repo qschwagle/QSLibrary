@@ -13,9 +13,15 @@ GameSquare::GameSquare(int value) : mValue{value}
 {
 }
 
-bool GameSquare::TryMerge(const GameSquare& lhs)
+bool GameSquare::TryMerge(GameSquare& lhs)
 {
-    return mValue == lhs.mValue;
+    if(mValue == lhs.mValue) {
+        lhs.mValue = 0;
+        mValue *= 2;
+        return true;
+    } else {
+        return false;
+    }
 }
 
 bool GameSquare::CanMerge(const GameSquare& lhs)

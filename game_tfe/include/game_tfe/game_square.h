@@ -41,7 +41,7 @@ class GameSquare final {
          * \param lhs the square to merge to
          * \returns true if successful, false otherwise
          */
-        bool TryMerge(const GameSquare& lhs);
+        bool TryMerge(GameSquare& lhs);
 
         /**
          * checks to see if two squares can be merged
@@ -49,6 +49,12 @@ class GameSquare final {
          * \returns true if they can, false otherwise
          */
         bool CanMerge(const GameSquare& lhs);
+
+        /**
+         * can be skipped over
+         * \returns true if this square can be skipped. otherwise false
+         */
+        [[nodiscard]] bool Skip(void) const noexcept { return mValue == 0; }
 
         /**
          * Gets the current position

@@ -65,16 +65,23 @@ static void FrameBufferSizeCallback(GLFWwindow* window, int width, int height)
     props.height = height;
 }
 
+/**
+ * callback registered on glfw window to respond to keyboard input
+ * \param key keyboard key
+ * \param scancode scancode
+ * \param action action
+ * \param mods mods
+ */
+static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    Game2048* game = static_cast<Game2048*>(glfwGetWindowUserPointer(window));
+    game->ProcessKeyboardInput(key, scancode, action, mods);
+}
+
 Game2048::Game2048()
 {
 
-    std::srand(std::time(0));
-    int rand_1 = std::rand() % 16;
-    int rand_2;
-    while((rand_2 = std::rand() % 16) == rand_1);
-    mGameSquares[rand_1] = std::move(GameSquare(2));
-    mGameSquares[rand_2] = std::move(GameSquare(2));
-}
+ }
 
 Game2048::~Game2048() noexcept
 {
@@ -115,6 +122,7 @@ bool Game2048::Init(int argc, char **argv)
 
     glfwSetFramebufferSizeCallback(mWindow, &FrameBufferSizeCallback);
     glfwSetWindowUserPointer(mWindow, this);
+    glfwSetKeyCallback(mWindow, &KeyCallback);
 
     glViewport(0,0, mWindowProperties.width, mWindowProperties.height);
 
@@ -192,7 +200,6 @@ int Game2048::Run()
     RVector<4> color = ColorIntToFloat(0xFA, 0xF8, 0xEF, 0xFF);
 
     while(!glfwWindowShouldClose(mWindow)) {
-        ProcessKeyboardInput();
 
         mGeometry.CreateTextureAtlas(5000, 5000, sizeof(unsigned char));
 
@@ -215,17 +222,7 @@ int Game2048::Run()
         RVector<3> game_board_square_margin_bottom = {0.0f, 10.0f + game_square_width, 0.0f};
         RVector<4> BLUE = RVector<4>{0.0f, 0.0f, 1.0f, 1.0f};
 
-        auto game_board_square_origin = game_board_box_origin + RVector<3> { 10.0f, 10.0f, 0.0f };
-        for(size_t i = 0; i < 4; ++i) {
-            auto going_left = game_board_square_origin;
-            for(size_t j = 0; j < 4; ++j) {
-                CreateRectangle3D(mGeometry, going_left, game_board_square_background, game_square_width, game_square_width);
-                mGameSquares[i*4+j].SetPosition(RVector<2> {going_left[0], going_left[1]});
-                mGameSquares[i*4+j].Draw(mGeometry, game_square_width);
-                going_left = going_left + game_board_square_margin_right;
-            }
-            game_board_square_origin = game_board_square_origin + game_board_square_margin_bottom;
-        }
+        mBoard.Draw(mGeometry, game_board_box_origin, game_board_dimension);
 
         RVector<4> green { 0.0f, 1.0f, 0.0f, 1.0f };
         RVector<4> blue { 0.0f, 0.0f, 1.0f, 1.0f };
@@ -234,7 +231,6 @@ int Game2048::Run()
         glfwGetWindowContentScale(mWindow, &window_scale_x, &window_scale_y);
         unsigned int window_scale_x_int = window_scale_x * 100;
         unsigned int window_scale_y_int = window_scale_y * 100;
-
 
         auto game_board_box_end = game_board_box_origin + RVector<3>{ game_board_dimension, 0.0f, 0.0f };
         std::string TITLE_2048 = "2048";
@@ -328,10 +324,29 @@ int Game2048::Draw()
     return 0;
 }
 
-void Game2048::ProcessKeyboardInput()
+void Game2048::ProcessKeyboardInput(int key, int scancode, int action, int mods)
 {
-    if(glfwGetKey(mWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+    if(key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(mWindow, true);
     }
+
+    if(key ==  GLFW_KEY_W && action == GLFW_PRESS || key == GLFW_KEY_UP && action == GLFW_PRESS) {
+        std::cout << "UP" << std::endl;
+        mBoard.Move(GameBoard::MoveDirection::UP);
+    }
+
+    if(key == GLFW_KEY_S && action == GLFW_PRESS || key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
+        std::cout << "DOWN" << std::endl;
+        mBoard.Move(GameBoard::MoveDirection::DOWN);
+    }
+
+    if(key == GLFW_KEY_A && action == GLFW_PRESS || key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
+        std::cout << "LEFT" << std::endl;
+    }
+
+    if(key == GLFW_KEY_D && action == GLFW_PRESS || key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
+        std::cout << "RIGHT" << std::endl;
+    }
 }
+
 
