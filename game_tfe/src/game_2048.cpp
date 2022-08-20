@@ -210,18 +210,25 @@ bool Game2048::Init(int argc, char **argv)
     RVector<4> green { 0.0f, 1.0f, 0.0f, 1.0f };
     RVector<4> blue { 0.0f, 0.0f, 1.0f, 1.0f };
 
+    float window_scale_x, window_scale_y;
+    glfwGetWindowContentScale(mWindow, &window_scale_x, &window_scale_y);
+    std::cout << "Content Scale: " << window_scale_x << ", " << window_scale_y << std::endl;
+    unsigned int window_scale_x_int = window_scale_x * 100;
+    unsigned int window_scale_y_int = window_scale_y * 100;
+
+
     auto game_board_box_end = game_board_box_origin + RVector<3>{ game_board_dimension, 0.0f, 0.0f };
     std::string TITLE_2048 = "2048";
 
-    DrawText(mGeometry, game_board_box_origin + RVector<3> {0.0f, static_cast<float>(mWindowProperties.height) - 125.0f, 0.0f}, green, 175.0f, 75.0f, TITLE_2048, 16, mWindowProperties.width, mWindowProperties.height);
+    DrawText(mGeometry, nullptr, game_board_box_origin + RVector<3> {0.0f, static_cast<float>(mWindowProperties.height) - 125.0f, 0.0f}, green, TITLE_2048, 48, window_scale_x_int, window_scale_y_int);
 
     std::string SCORE = "SCORE";
 
-    DrawText(mGeometry, game_board_box_end + RVector<3> { -210.0f, static_cast<float>(mWindowProperties.height) - 75.0f, 0.0f}, blue, 100.0f, 50.0f, SCORE, 10, mWindowProperties.width, mWindowProperties.height);
+    DrawText(mGeometry, nullptr, game_board_box_end + RVector<3> { -210.0f, static_cast<float>(mWindowProperties.height) - 75.0f, 0.0f}, blue, SCORE, 18, window_scale_x_int, window_scale_y_int);
 
     std::string BEST = "BEST";
 
-    DrawText(mGeometry, game_board_box_end + RVector<3> { -100.0f, static_cast<float>(mWindowProperties.height) - 75.0f, 0.0f}, blue, 100.0f, 50.0f, BEST, 10, mWindowProperties.width, mWindowProperties.height);
+    DrawText(mGeometry, nullptr, game_board_box_end + RVector<3> { -100.0f, static_cast<float>(mWindowProperties.height) - 75.0f, 0.0f}, blue, BEST, 18, window_scale_x_int, window_scale_y_int);
 
     mBuffer.Init();
 
@@ -281,6 +288,31 @@ int Game2048::Run()
 int Game2048::Draw()
 {
     glDrawElements(GL_TRIANGLES, mGeometry.GetIndicesCount(), GL_UNSIGNED_INT, 0);
+    GLenum error;
+    while((error = glGetError()) != GL_NO_ERROR) {
+        switch(error) {
+            case GL_INVALID_ENUM:
+                std::cerr << "Draw: GL_INVALID_ENUM" << std::endl;
+                break;
+            case GL_INVALID_VALUE:
+                std::cerr << "Draw: GL_INVALID_VALUE" << std::endl;
+                break;
+            case GL_INVALID_OPERATION:
+                std::cerr << "Draw: GL_INVALID_OPERATION" << std::endl;
+                break;
+            case GL_STACK_OVERFLOW:
+                std::cerr << "Draw: GL_STACK_OVERFLOW" << std::endl;
+                break;
+            case GL_OUT_OF_MEMORY:
+                std::cerr << "Draw: GL_OUT_OF_MEMORY" << std::endl;
+                break;
+            case GL_INVALID_FRAMEBUFFER_OPERATION:
+                std::cerr << "Draw: GL_INVALID_FRAMEBUFFER_OPERATION" << std::endl;
+                break;
+            default:
+                std::cerr << "Draw: GL UNKNOWN ERROR" << std::endl;
+        }
+    }
     return 0;
 }
 

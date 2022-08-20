@@ -4,7 +4,7 @@
 
 GLBuffer::~GLBuffer()
 {
-    if(glGenTextures) {
+    if(mHasGenTexture) {
         glDeleteTextures(1, &mTextureId);
     }
 
@@ -69,9 +69,10 @@ bool GLBuffer::BindVertexArrayObject()
 
 void GLBuffer::LoadTextureRGB(unsigned char * texture_data, int width, int height)
 {
-    if(glGenTextures) {
+    if(mHasGenTexture) {
         glDeleteTextures(1, &mTextureId);
     }
+    mHasGenTexture = true;
     glGenTextures(1, &mTextureId);
 
     glBindTexture(GL_TEXTURE_2D, mTextureId);
@@ -89,9 +90,10 @@ void GLBuffer::LoadTextureRGB(unsigned char * texture_data, int width, int heigh
 void GLBuffer::LoadTextureRed(unsigned char * texture_data, int width, int height)
 {
 
-    if(glGenTextures) {
+    if(mHasGenTexture) {
         glDeleteTextures(1, &mTextureId);
     }
+    mHasGenTexture = true;
     glGenTextures(1, &mTextureId);
 
     glBindTexture(GL_TEXTURE_2D, mTextureId);

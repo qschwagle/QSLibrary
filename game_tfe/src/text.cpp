@@ -174,3 +174,114 @@ void DrawText(
 
     freetype_lock.unlock();
 }
+
+
+void DrawText(
+        Geometry<9>& out, 
+        RVector<2>* dim_out,
+        RVector<3> coordinate, 
+        RVector<4> color, 
+        std::string& text,
+        unsigned int pt,
+        unsigned int screen_width,
+        unsigned int screen_height
+        )
+{
+    freetype_lock.lock();
+    if(!freetype_initialized) {
+
+        FT_Error error = FT_Init_FreeType(&library);
+        if(error) {
+            std::cerr << "DrawText:Error initailizing FreeType Library. Exiting" << std::endl;
+            std::exit(EXIT_FAILURE);
+        }
+
+        FT_Face face;
+
+        error = FT_New_Face( library, "/usr/share/fonts/liberation-mono/LiberationMono-Regular.ttf", 0, &face);
+        if(error) {
+            std::cerr << "DrawText:Error Creating new Face. Exiting" << std::endl;
+            std::exit(EXIT_FAILURE);
+        }
+
+        error = FT_Set_Char_Size(face, 0, pt * 64, screen_width, screen_height);
+        if(error) {
+            std::cerr << "DrawText:Error Setting Char Size. Exiting" << std::endl;
+            std::exit(EXIT_FAILURE);
+        }
+
+        FT_GlyphSlot slot = face->glyph;
+
+        std::vector<FT_Glyph> glyphs;
+        std::vector<FT_Vector> pos;
+
+        int pen_x = 0;
+        int pen_y = 0;
+
+        FT_Bool use_kerning = FT_HAS_KERNING(face);
+        FT_UInt previous = 0;
+
+        for(int n = 0; n < text.size(); ++n) {
+            FT_UInt glyph_index = FT_Get_Char_Index(face, text[n]);
+
+            if(use_kerning && previous && glyph_index) {
+                FT_Vector delta;
+                FT_Get_Kerning(face, previous, glyph_index, FT_KERNING_DEFAULT, &delta);
+                pen_x += delta.x >> 6;
+            }
+
+            pos.push_back(FT_Vector { .x = pen_x, .y = pen_y });
+            error = FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT);
+            if(error)
+                continue;
+
+            glyphs.emplace_back();
+            error = FT_Get_Glyph(face->glyph, &(glyphs.back()));
+
+            if(error)
+                continue;
+
+            pen_x += slot->advance.x >> 6;
+            previous = glyph_index;
+        }
+
+        FT_BBox string_bbox;
+        compute_string_bbox(&string_bbox, glyphs, pos);
+
+        long long string_width = string_bbox.xMax - string_bbox.xMin;
+        long long string_height = string_bbox.yMax - string_bbox.yMin;
+
+        std::array<RVector<2>, 4> tex_coords;
+
+        std::array<size_t, 2> offset;
+
+        unsigned char* block = out.GetAtlas()->GetNextFit(string_width, string_height, sizeof(unsigned char), tex_coords, offset);
+
+        for(int n = 0; n < glyphs.size(); ++n) {
+            FT_Glyph image;
+            FT_Vector pen { .x = pos[n].x, .y = pos[n].y };
+            image = glyphs[n];
+
+            unsigned int x = offset[0] + pos[n].x;
+
+            error = FT_Glyph_To_Bitmap(&image, FT_RENDER_MODE_NORMAL, &pen, 0);
+            if(!error) {
+                FT_BitmapGlyph bit = (FT_BitmapGlyph) image;
+
+                WriteToBuffer(block, out.GetAtlas()->GetWidth(), bit->bitmap, x, 0);
+
+                // write glyph
+                FT_Done_Glyph(image);
+            }
+        }
+
+        CreateRectangle3D(out, coordinate, color, string_width, string_height, tex_coords[1], tex_coords[0], tex_coords[3], tex_coords[2]);
+
+        if(dim_out != nullptr){
+            (*dim_out)[0] = string_width;
+            (*dim_out)[1] = string_height;
+        }
+    }
+
+    freetype_lock.unlock();
+}
