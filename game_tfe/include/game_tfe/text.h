@@ -23,4 +23,15 @@
 void DrawText(Geometry<9>& out, RVector<3> coordinate, RVector<4> color, float width, float height, std::string& text, unsigned int pt,
         unsigned int screen_width, unsigned int screen_height);
 
+/**
+ * Write the string texture to buffer, generates vertices based around text size, and optionally writes the size to dim_out
+ * \param out geometry buffer
+ * \param dim_out dimensions of the resulting vertices. if nullptr, will ignore it
+ * \param coordinate translation coordinates
+ * \param color color of text
+ * \param text text to be written
+ * \param pt point font size
+ */
+void DrawText(Geometry<9>& out, RVector<2>* dim_out, RVector<3> coordinate, RVector<4> color, std::string& text, unsigned int pt, unsigned int screen_width, unsigned int screen_height);
+
 #endif
