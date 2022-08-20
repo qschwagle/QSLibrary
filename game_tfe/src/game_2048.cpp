@@ -17,6 +17,8 @@
 #include "linalg/cmatrix.h"
 #include "geometry/geometry.h"
 #include "game_tfe/text.h"
+#include <cstdlib>
+#include <ctime>
 
 /**
  * converts from 0-255 int to float 0.0f to 1.0f
@@ -66,6 +68,12 @@ static void FrameBufferSizeCallback(GLFWwindow* window, int width, int height)
 Game2048::Game2048()
 {
 
+    std::srand(std::time(0));
+    int rand_1 = std::rand() % 16;
+    int rand_2;
+    while((rand_2 = std::rand() % 16) == rand_1);
+    mGameSquares[rand_1] = std::move(GameSquare(2));
+    mGameSquares[rand_2] = std::move(GameSquare(2));
 }
 
 Game2048::~Game2048() noexcept
@@ -176,7 +184,7 @@ bool Game2048::Init(int argc, char **argv)
         return false;
     }
 
-    mGeometry.CreateTextureAtlas(1000, 1000, sizeof(unsigned char));
+    mGeometry.CreateTextureAtlas(5000, 5000, sizeof(unsigned char));
 
     RVector<4> board_background = ColorIntToFloat(0xD4, 0xB8, 0x67, 0xFF);
 
@@ -202,6 +210,8 @@ bool Game2048::Init(int argc, char **argv)
         auto going_left = game_board_square_origin;
         for(size_t j = 0; j < 4; ++j) {
             CreateRectangle3D(mGeometry, going_left, game_board_square_background, game_square_width, game_square_width);
+            mGameSquares[i*4+j].SetPosition(RVector<2> {going_left[0], going_left[1]});
+            mGameSquares[i*4+j].Draw(mGeometry, game_square_width);
             going_left = going_left + game_board_square_margin_right;
         }
         game_board_square_origin = game_board_square_origin + game_board_square_margin_bottom;
