@@ -222,6 +222,13 @@ public:
         return mAtlas.get();
     }
 
+    void Clear()
+    {
+        mAtlas = nullptr;
+        mIndices.clear();
+        mVertices.clear();
+    }
+
 private:
     /// indicies
     std::vector<unsigned int> mIndices;
