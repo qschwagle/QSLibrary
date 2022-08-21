@@ -169,9 +169,8 @@ void DrawText(
     unsigned char* block = out.GetAtlas()->GetNextFit(string_width, string_height, sizeof(unsigned char), tex_coords, offset);
 
     for(int n = 0; n < glyphs.size(); ++n) {
-        FT_Glyph image;
+        FT_Glyph image = glyphs[n];
         FT_Vector pen { .x = pos[n].x, .y = pos[n].y };
-        image = glyphs[n];
 
         unsigned int x = offset[0] + pos[n].x;
 
@@ -180,9 +179,8 @@ void DrawText(
             FT_BitmapGlyph bit = (FT_BitmapGlyph) image;
 
             WriteToBuffer(block, out.GetAtlas()->GetWidth(), bit->bitmap, x, 0);
-
-            // write glyph
         }
+        FT_Done_Glyph(glyphs[n]);
         FT_Done_Glyph(image);
         glyphs[n] = nullptr;
 
