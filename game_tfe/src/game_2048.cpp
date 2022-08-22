@@ -241,9 +241,17 @@ int Game2048::Run()
 
         DrawText(mGeometry, nullptr, game_board_box_end + RVector<3> { -210.0f, static_cast<float>(mWindowProperties.height) - 75.0f, 0.0f}, blue, SCORE, 18, window_scale_x_int, window_scale_y_int);
 
+        std::string current_score = std::to_string(mScore);
+
+        DrawText(mGeometry, nullptr, game_board_box_end + RVector<3> { -210.0f, static_cast<float>(mWindowProperties.height) - 100.0f, 0.0f}, blue, current_score, 22, window_scale_x_int, window_scale_y_int);
+
         std::string BEST = "BEST";
 
         DrawText(mGeometry, nullptr, game_board_box_end + RVector<3> { -100.0f, static_cast<float>(mWindowProperties.height) - 75.0f, 0.0f}, blue, BEST, 18, window_scale_x_int, window_scale_y_int);
+
+        std::string best_score = std::to_string(mBestScore);
+
+        DrawText(mGeometry, nullptr, game_board_box_end + RVector<3> { -100.0f, static_cast<float>(mWindowProperties.height) - 100.0f, 0.0f}, blue, best_score, 22, window_scale_x_int, window_scale_y_int);
 
         mBuffer.Init();
 
@@ -332,22 +340,25 @@ void Game2048::ProcessKeyboardInput(int key, int scancode, int action, int mods)
 
     if(key ==  GLFW_KEY_W && action == GLFW_PRESS || key == GLFW_KEY_UP && action == GLFW_PRESS) {
         std::cout << "UP" << std::endl;
-        mBoard.Move(GameBoard::MoveDirection::UP);
+        mScore += mBoard.Move(GameBoard::MoveDirection::UP);
     }
 
     if(key == GLFW_KEY_S && action == GLFW_PRESS || key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
         std::cout << "DOWN" << std::endl;
-        mBoard.Move(GameBoard::MoveDirection::DOWN);
+        mScore += mBoard.Move(GameBoard::MoveDirection::DOWN);
     }
 
     if(key == GLFW_KEY_A && action == GLFW_PRESS || key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
         std::cout << "LEFT" << std::endl;
-        mBoard.Move(GameBoard::MoveDirection::LEFT);
+        mScore += mBoard.Move(GameBoard::MoveDirection::LEFT);
     }
 
     if(key == GLFW_KEY_D && action == GLFW_PRESS || key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
         std::cout << "RIGHT" << std::endl;
-        mBoard.Move(GameBoard::MoveDirection::RIGHT);
+        mScore += mBoard.Move(GameBoard::MoveDirection::RIGHT);
+    }
+    if(mScore > mBestScore) {
+        mBestScore = mScore;
     }
 }
 

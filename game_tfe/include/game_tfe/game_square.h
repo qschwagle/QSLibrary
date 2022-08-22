@@ -39,9 +39,9 @@ class GameSquare final {
         /**
          * tries to merge the two squares
          * \param lhs the square to merge to
-         * \returns true if successful, false otherwise
+         * \returns the new square value if successful, zero otherwise
          */
-        bool TryMerge(GameSquare& lhs);
+        unsigned long long Merge(GameSquare& lhs);
 
         /**
          * checks to see if two squares can be merged

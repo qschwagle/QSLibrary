@@ -96,6 +96,12 @@ private:
 
     /// game board
     GameBoard mBoard;
+
+    /// best score
+    unsigned long long mBestScore{0};
+
+    /// score
+    unsigned long long mScore{0};
 };
 
 #endif //DRAWING_GAME_2048_H

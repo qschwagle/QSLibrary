@@ -67,9 +67,10 @@ static bool SkipSquare(std::array<GameSquare, 16>& board, size_t col, size_t row
     return board[row * 4 + col].Skip();
 }
 
-void GameBoard::Move(GameBoard::MoveDirection m)
+unsigned long long GameBoard::Move(GameBoard::MoveDirection m)
 {
     bool move_occurred =  false;
+    unsigned long long points = 0;
     std::array<bool, 16> merged_squares;
     for(auto& i: merged_squares) {
         i = false;
@@ -97,7 +98,7 @@ void GameBoard::Move(GameBoard::MoveDirection m)
                         // we found a non skippable square
                         if(!merged_squares[k*4+i] && mGameSquares[k*4 + i].CanMerge(mGameSquares[j*4 +i])) {
                             // merge with it if we can
-                            mGameSquares[k*4+i].TryMerge(mGameSquares[j*4+i]);
+                            points += mGameSquares[k*4+i].Merge(mGameSquares[j*4+i]);
                             merged_squares[k*4+i] = true;
                             move_occurred = true;
                         } else {
@@ -134,7 +135,7 @@ void GameBoard::Move(GameBoard::MoveDirection m)
                         // we found a non skippable square
                         if(!merged_squares[k*4+i] && mGameSquares[k*4 + i].CanMerge(mGameSquares[j*4 +i])) {
                             // merge with it if we can
-                            mGameSquares[k*4+i].TryMerge(mGameSquares[j*4+i]);
+                            points += mGameSquares[k*4+i].Merge(mGameSquares[j*4+i]);
                             merged_squares[k*4+i] = true;
                             move_occurred = true;
                         } else {
@@ -171,7 +172,7 @@ void GameBoard::Move(GameBoard::MoveDirection m)
                         // we found a non skippable square
                         if(!merged_squares[i*4+k] && mGameSquares[i*4 + k].CanMerge(mGameSquares[i*4 +j])) {
                             // merge with it if we can
-                            mGameSquares[i*4+k].TryMerge(mGameSquares[i*4+j]);
+                            points += mGameSquares[i*4+k].Merge(mGameSquares[i*4+j]);
                             merged_squares[i*4+k] = true;
                             move_occurred = true;
                         } else {
@@ -208,7 +209,7 @@ void GameBoard::Move(GameBoard::MoveDirection m)
                         // we found a non skippable square
                         if(!merged_squares[i*4+k] && mGameSquares[i*4 + k].CanMerge(mGameSquares[i*4 +j])) {
                             // merge with it if we can
-                            mGameSquares[i*4+k].TryMerge(mGameSquares[i*4+j]);
+                            points += mGameSquares[i*4+k].Merge(mGameSquares[i*4+j]);
                             merged_squares[i*4+k] = true;
                             move_occurred = true;
                         } else {
@@ -227,4 +228,5 @@ void GameBoard::Move(GameBoard::MoveDirection m)
     if(move_occurred) {
         AddNewSquare();
     }
+    return points;
 }

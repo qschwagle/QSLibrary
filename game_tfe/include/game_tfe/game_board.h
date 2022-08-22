@@ -21,7 +21,7 @@ class GameBoard {
             DOWN
         };
 
-        void Move(MoveDirection m);
+        unsigned long long Move(MoveDirection m);
 
         void AddNewSquare(void);
 

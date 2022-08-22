@@ -13,14 +13,14 @@ GameSquare::GameSquare(int value) : mValue{value}
 {
 }
 
-bool GameSquare::TryMerge(GameSquare& lhs)
+unsigned long long GameSquare::Merge(GameSquare& lhs)
 {
     if(mValue == lhs.mValue) {
         lhs.mValue = 0;
         mValue *= 2;
-        return true;
+        return mValue;
     } else {
-        return false;
+        return 0;
     }
 }
 
