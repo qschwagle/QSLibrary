@@ -59,11 +59,10 @@ void GameBoard::Move(GameBoard::MoveDirection m)
         i = false;
     }
     switch(m) {
-        case GameBoard::MoveDirection::DOWN:
+        case GameBoard::MoveDirection::UP:
             for(int i = 0; i < 4; ++i) {
                 for(int j = 2; j > -1; --j) {
-                    if(mGameSquares[j*4 + i].Skip()) 
-                        continue;
+                    if(mGameSquares[j*4 + i].Skip()) continue;
                     int k = j+1;
                     for(; k < 4; ++k) {
                         if(mGameSquares[k*4 + i].Skip()) continue;
@@ -85,11 +84,81 @@ void GameBoard::Move(GameBoard::MoveDirection m)
                 }
             }
             break;
-        case GameBoard::MoveDirection::UP:
+        case GameBoard::MoveDirection::DOWN:
+            for(int i = 0; i < 4; ++i) {
+                for(int j = 1; j < 4; ++j) {
+                    if(mGameSquares[j*4 + i].Skip()) continue;
+                    int k = j-1;
+                    for(; k > -1; --k) {
+                        if(mGameSquares[k*4+i].Skip()) continue;
+                        if(merged_squares[k*4+i]) {
+                            mGameSquares[k*4+i] = std::move(mGameSquares[j*4+i]);
+                            mGameSquares[j*4+i] = GameSquare(0);
+                            break;
+                        }
+                        if(mGameSquares[k*4+i].CanMerge(mGameSquares[j*4+i])) {
+                            mGameSquares[k*4+i].TryMerge(mGameSquares[j*4+i]);
+                            merged_squares[k*4+i] = true;
+                            break;
+                        }
+                    }
+                    if(k == -1 && k+1 != j) {
+                        mGameSquares[(k+1)*4+i] = std::move(mGameSquares[j*4+i]);
+                        mGameSquares[j*4+i] = GameSquare(0);
+                    }
+                }
+            }
             break;
         case GameBoard::MoveDirection::LEFT:
+            for(int i = 0; i < 4; ++i) {
+                for(int j = 1; j < 4; ++j) {
+                    if(mGameSquares[i*4 + j].Skip()) continue;
+                    int k = j-1;
+                    for(; k > -1; --k) {
+                        if(mGameSquares[i*4+k].Skip()) continue;
+                        if(merged_squares[i*4+k]) {
+                            mGameSquares[i*4+k] = std::move(mGameSquares[i*4+j]);
+                            mGameSquares[i*4+j] = GameSquare(0);
+                            break;
+                        }
+                        if(mGameSquares[i*4+k].CanMerge(mGameSquares[i*4+j])) {
+                            mGameSquares[i*4+k].TryMerge(mGameSquares[i*4+j]);
+                            merged_squares[i*4+k] = true;
+                            break;
+                        }
+                    }
+                    if(k == -1 && k+1 != j) {
+                        mGameSquares[i*4+k+1] = std::move(mGameSquares[i*4+j]);
+                        mGameSquares[i*4+j] = GameSquare(0);
+                    }
+                }
+            }
             break;
         case GameBoard::MoveDirection::RIGHT:
+            for(int i = 0; i < 4; ++i) {
+                for(int j = 2; j > -1; --j) {
+                    if(mGameSquares[i*4 + j].Skip()) continue;
+                    int k = j+1;
+                    for(; k < 4; ++k) {
+                        if(mGameSquares[i*4 + k].Skip()) continue;
+                        if(merged_squares[i*4+k]) {
+                            mGameSquares[i*4+k] = std::move(mGameSquares[i*4+j]);
+                            mGameSquares[i*4+j] = GameSquare(0);
+                            break;
+                        }
+                        if(mGameSquares[i*4 + k].CanMerge(mGameSquares[i*4+k])) {
+                            mGameSquares[i*4+k].TryMerge(mGameSquares[i*4+j]);
+                            merged_squares[i*4+k] = true;
+                            break;
+                        }
+                    }
+                    if(k == 4 && k-1 != j) {
+                        mGameSquares[i*4+k-1] = std::move(mGameSquares[i*4+j]);
+                        mGameSquares[i*4+j] = GameSquare(0);
+                    }
+                }
+            }
+
             break;
     }
 }
