@@ -342,10 +342,12 @@ void Game2048::ProcessKeyboardInput(int key, int scancode, int action, int mods)
 
     if(key == GLFW_KEY_A && action == GLFW_PRESS || key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
         std::cout << "LEFT" << std::endl;
+        mBoard.Move(GameBoard::MoveDirection::LEFT);
     }
 
     if(key == GLFW_KEY_D && action == GLFW_PRESS || key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
         std::cout << "RIGHT" << std::endl;
+        mBoard.Move(GameBoard::MoveDirection::RIGHT);
     }
 }
 
