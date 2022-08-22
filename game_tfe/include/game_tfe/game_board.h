@@ -9,11 +9,22 @@
  */
 class GameBoard {
     public:
+        /** initializes the board with two squares */
         GameBoard();
+        /** deconstructor */
         ~GameBoard() {}
 
+        /**
+         * draws the game board
+         * \param out geometry buffer
+         * \param position position of the board\
+         * \param width width the board should be
+         */
         void Draw(Geometry<9>& out, RVector<3> position, float width);
 
+        /**
+         * movement directions applied to the board
+         */
         enum class MoveDirection {
             LEFT,
             RIGHT,
@@ -21,12 +32,25 @@ class GameBoard {
             DOWN
         };
 
+        /**
+         * tries to move in the direction provided
+         * \param m direction
+         * \returns new points generated due to move
+         */
         unsigned long long Move(MoveDirection m);
 
+        /**
+         * checks all directions for an available move
+         * \returns false if none exist, otherwise true
+         */
+        bool AvailableMove(void);
+
+        /**
+         * adds a new square to an open square
+         */
         void AddNewSquare(void);
-
     private:
-
+        /// squares
         std::array<GameSquare, 16> mGameSquares;
 };
 

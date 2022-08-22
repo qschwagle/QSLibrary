@@ -230,3 +230,129 @@ unsigned long long GameBoard::Move(GameBoard::MoveDirection m)
     }
     return points;
 }
+
+bool GameBoard::AvailableMove()
+{
+    // up 
+    for(int i = 0; i < 4; ++i) {
+        for(int j = 2; j > -1; --j) {
+            // we are not moving skippable squares
+            if(SkipSquare(mGameSquares, i, j)) continue;
+
+            int k = j+1;
+
+            // find the next non skippable square or the end
+            for(; k < 4 && mGameSquares[k*4+i].Skip(); ++k);
+
+            if(k == 4) {
+                if(k-1 != j) {
+                    // we managed to get to the end and the previous square is not itself and skippable
+                    return true;
+                }
+            } else {
+                // we found a non skippable square
+                if(mGameSquares[k*4 + i].CanMerge(mGameSquares[j*4 +i])) {
+                    // merge with it if we can
+                    return true;
+                } else {
+                    // check to see if there is a free square right before it and its not itself
+                    if(mGameSquares[(k-1)*4+i].Skip() && k-1 != j) {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    // down
+    for(int i = 0; i < 4; ++i) {
+        for(int j = 0; j < 4; ++j) {
+            // we are not moving skippable squares
+            if(SkipSquare(mGameSquares, i, j)) continue;
+
+            int k = j-1;
+
+            // find the next non skippable square or the end
+            for(; k > -1 && mGameSquares[k*4+i].Skip(); --k);
+
+            if(k == -1) {
+                if(k+1 != j) {
+                    // we managed to get to the end and the previous square is not itself and skippable
+                    return true;
+               }
+            } else {
+                // we found a non skippable square
+                if(mGameSquares[k*4 + i].CanMerge(mGameSquares[j*4 +i])) {
+                    // merge with it if we can
+                    return true;
+                } else {
+                    // check to see if there is a free square right before it and its not itself
+                    if(mGameSquares[(k+1)*4+i].Skip() && k+1 != j) {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    // left
+    for(int i = 0; i < 4; ++i) {
+        for(int j = 0; j < 4; ++j) {
+            // we are not moving skippable squares
+            if(SkipSquare(mGameSquares, j, i)) continue;
+
+            int k = j-1;
+
+            // find the next non skippable square or the end
+            for(; k > -1 && mGameSquares[i*4+k].Skip(); --k);
+
+            if(k == -1) {
+                if(k+1 != j) {
+                    // we managed to get to the end and the previous square is not itself and skippable
+                    return true;
+               }
+            } else {
+                // we found a non skippable square
+                if(mGameSquares[i*4 + k].CanMerge(mGameSquares[i*4 +j])) {
+                    // merge with it if we can
+                    return true;
+                } else {
+                    // check to see if there is a free square right before it and its not itself
+                    if(mGameSquares[i*4+k+1].Skip() && k+1 != j) {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+
+    // right
+    for(int i = 0; i < 4; ++i) {
+        for(int j = 3; j > -1; --j) {
+            // we are not moving skippable squares
+            if(SkipSquare(mGameSquares, j, i)) continue;
+
+            int k = j+1;
+
+            // find the next non skippable square or the end
+            for(; k < 4 && mGameSquares[i*4+k].Skip(); ++k);
+
+            if(k == 4) {
+                if(k-1 != j) {
+                    // we managed to get to the end and the previous square is not itself and skippable
+                    return true;
+               }
+            } else {
+                // we found a non skippable square
+                if(mGameSquares[i*4 + k].CanMerge(mGameSquares[i*4 +j])) {
+                    // merge with it if we can
+                    return true;
+                } else {
+                    // check to see if there is a free square right before it and its not itself
+                    if(mGameSquares[i*4+k-1].Skip() && k-1 != j) {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+    return false;
+}

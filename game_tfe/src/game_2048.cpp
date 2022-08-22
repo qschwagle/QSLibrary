@@ -360,6 +360,9 @@ void Game2048::ProcessKeyboardInput(int key, int scancode, int action, int mods)
     if(mScore > mBestScore) {
         mBestScore = mScore;
     }
+    if(!mBoard.AvailableMove()) {
+        std::cout << "No More moves available" << std::endl;
+    }
 }
 
 
