@@ -102,6 +102,9 @@ private:
 
     /// score
     unsigned long long mScore{0};
+
+    /// game has ended
+    bool mGameHasEnded{true};
 };
 
 #endif //DRAWING_GAME_2048_H

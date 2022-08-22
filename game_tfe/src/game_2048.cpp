@@ -223,6 +223,16 @@ int Game2048::Run()
         RVector<4> BLUE = RVector<4>{0.0f, 0.0f, 1.0f, 1.0f};
 
         mBoard.Draw(mGeometry, game_board_box_origin, game_board_dimension);
+        if(mGameHasEnded) {
+            // display end screen
+            RVector<4> TRANSPARENT_WHITE = {1.0f, 1.0f, 1.0f, 0.5f};
+            RVector<4> TEXT_COLOR = {0.0f, 0.0f, 0.0f, 1.0f};
+            CreateRectangle3D(mGeometry, game_board_box_origin, TRANSPARENT_WHITE, game_board_dimension, game_board_dimension);
+            std::string GAME_OVER = "Game over!";
+            RVector<3> mid_point = { game_board_box_origin[0] + game_board_dimension / 2.0f, game_board_box_origin[1] + game_board_dimension * 2.0f / 3.0f, 0.0f};
+            
+            DrawText(mGeometry, nullptr, mid_point, TEXT_COLOR, GAME_OVER, 24, 100, 100, TextAlignment::CENTER);
+        }
 
         RVector<4> green { 0.0f, 1.0f, 0.0f, 1.0f };
         RVector<4> blue { 0.0f, 0.0f, 1.0f, 1.0f };
@@ -338,30 +348,32 @@ void Game2048::ProcessKeyboardInput(int key, int scancode, int action, int mods)
         glfwSetWindowShouldClose(mWindow, true);
     }
 
-    if(key ==  GLFW_KEY_W && action == GLFW_PRESS || key == GLFW_KEY_UP && action == GLFW_PRESS) {
-        std::cout << "UP" << std::endl;
-        mScore += mBoard.Move(GameBoard::MoveDirection::UP);
-    }
+    if(!mGameHasEnded) {
+        if(key ==  GLFW_KEY_W && action == GLFW_PRESS || key == GLFW_KEY_UP && action == GLFW_PRESS) {
+            std::cout << "UP" << std::endl;
+            mScore += mBoard.Move(GameBoard::MoveDirection::UP);
+        }
 
-    if(key == GLFW_KEY_S && action == GLFW_PRESS || key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
-        std::cout << "DOWN" << std::endl;
-        mScore += mBoard.Move(GameBoard::MoveDirection::DOWN);
-    }
+        if(key == GLFW_KEY_S && action == GLFW_PRESS || key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
+            std::cout << "DOWN" << std::endl;
+            mScore += mBoard.Move(GameBoard::MoveDirection::DOWN);
+        }
 
-    if(key == GLFW_KEY_A && action == GLFW_PRESS || key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
-        std::cout << "LEFT" << std::endl;
-        mScore += mBoard.Move(GameBoard::MoveDirection::LEFT);
-    }
+        if(key == GLFW_KEY_A && action == GLFW_PRESS || key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
+            std::cout << "LEFT" << std::endl;
+            mScore += mBoard.Move(GameBoard::MoveDirection::LEFT);
+        }
 
-    if(key == GLFW_KEY_D && action == GLFW_PRESS || key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
-        std::cout << "RIGHT" << std::endl;
-        mScore += mBoard.Move(GameBoard::MoveDirection::RIGHT);
-    }
-    if(mScore > mBestScore) {
-        mBestScore = mScore;
-    }
-    if(!mBoard.AvailableMove()) {
-        std::cout << "No More moves available" << std::endl;
+        if(key == GLFW_KEY_D && action == GLFW_PRESS || key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
+            std::cout << "RIGHT" << std::endl;
+            mScore += mBoard.Move(GameBoard::MoveDirection::RIGHT);
+        }
+        if(mScore > mBestScore) {
+            mBestScore = mScore;
+        }
+        if(!mBoard.AvailableMove()) {
+            mGameHasEnded = true;
+        }
     }
 }
 
