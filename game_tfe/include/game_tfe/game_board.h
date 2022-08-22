@@ -23,6 +23,8 @@ class GameBoard {
 
         void Move(MoveDirection m);
 
+        void AddNewSquare(void);
+
     private:
 
         std::array<GameSquare, 16> mGameSquares;
