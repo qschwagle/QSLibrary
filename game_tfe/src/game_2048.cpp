@@ -67,6 +67,7 @@ static void FrameBufferSizeCallback(GLFWwindow* window, int width, int height)
 
 /**
  * callback registered on glfw window to respond to keyboard input
+ * \param window glfw window
  * \param key keyboard key
  * \param scancode scancode
  * \param action action
@@ -78,10 +79,25 @@ static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, i
     game->ProcessKeyboardInput(key, scancode, action, mods);
 }
 
+/** 
+ * callback registered on glfw windwo to respont to mouse input
+ * \param window glfw window
+ * \param 
+ */
+static void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
+{
+    double xpos, ypos;
+    glfwGetCursorPos(window, &xpos, &ypos);
+    Game2048* game = static_cast<Game2048*>(glfwGetWindowUserPointer(window));
+    if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+        game->LeftMouseClick(xpos, ypos);
+    }
+}
+
 Game2048::Game2048()
 {
 
- }
+}
 
 Game2048::~Game2048() noexcept
 {
@@ -123,6 +139,7 @@ bool Game2048::Init(int argc, char **argv)
     glfwSetFramebufferSizeCallback(mWindow, &FrameBufferSizeCallback);
     glfwSetWindowUserPointer(mWindow, this);
     glfwSetKeyCallback(mWindow, &KeyCallback);
+    glfwSetMouseButtonCallback(mWindow, &MouseButtonCallback);
 
     glViewport(0,0, mWindowProperties.width, mWindowProperties.height);
 
@@ -223,6 +240,24 @@ int Game2048::Run()
         RVector<4> BLUE = RVector<4>{0.0f, 0.0f, 1.0f, 1.0f};
 
         mBoard.Draw(mGeometry, game_board_box_origin, game_board_dimension);
+        if(mGameHasEnded) {
+            // display end screen
+            RVector<4> TRANSPARENT_WHITE = {1.0f, 1.0f, 1.0f, 0.5f};
+            RVector<4> TEXT_COLOR = {0.0f, 0.0f, 0.0f, 1.0f};
+            CreateRectangle3D(mGeometry, game_board_box_origin, TRANSPARENT_WHITE, game_board_dimension, game_board_dimension);
+            std::string GAME_OVER = "Game over!";
+            RVector<3> mid_point = { game_board_box_origin[0] + game_board_dimension / 2.0f, game_board_box_origin[1] + game_board_dimension * 2.0f / 3.0f, 0.0f};
+            
+            DrawText(mGeometry, nullptr, mid_point, TEXT_COLOR, GAME_OVER, 24, 100, 100, TextAlignment::CENTER);
+
+            RVector<3> below_mid = { game_board_box_origin[0] + game_board_dimension / 2.0f - 150.0f / 2.0f, game_board_box_origin[1] + 3.0f * game_board_dimension / 8.0f, 0.0f };
+
+            RVector<4> BUTTON_BG_COLOR = ColorIntToFloat(0x8F, 0x7A, 0x66, 0xFF);
+
+            std::string NEW_GAME = "New Game";
+
+            mNewGameEndScreen.Draw(mGeometry, below_mid, 150.0, 50.0f, BUTTON_BG_COLOR, board_background, 14, NEW_GAME);
+        }
 
         RVector<4> green { 0.0f, 1.0f, 0.0f, 1.0f };
         RVector<4> blue { 0.0f, 0.0f, 1.0f, 1.0f };
@@ -338,28 +373,50 @@ void Game2048::ProcessKeyboardInput(int key, int scancode, int action, int mods)
         glfwSetWindowShouldClose(mWindow, true);
     }
 
-    if(key ==  GLFW_KEY_W && action == GLFW_PRESS || key == GLFW_KEY_UP && action == GLFW_PRESS) {
-        std::cout << "UP" << std::endl;
-        mScore += mBoard.Move(GameBoard::MoveDirection::UP);
-    }
+    if(!mGameHasEnded) {
+        if(key ==  GLFW_KEY_W && action == GLFW_PRESS || key == GLFW_KEY_UP && action == GLFW_PRESS) {
+            std::cout << "UP" << std::endl;
+            mScore += mBoard.Move(GameBoard::MoveDirection::UP);
+        }
 
-    if(key == GLFW_KEY_S && action == GLFW_PRESS || key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
-        std::cout << "DOWN" << std::endl;
-        mScore += mBoard.Move(GameBoard::MoveDirection::DOWN);
-    }
+        if(key == GLFW_KEY_S && action == GLFW_PRESS || key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
+            std::cout << "DOWN" << std::endl;
+            mScore += mBoard.Move(GameBoard::MoveDirection::DOWN);
+        }
 
-    if(key == GLFW_KEY_A && action == GLFW_PRESS || key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
-        std::cout << "LEFT" << std::endl;
-        mScore += mBoard.Move(GameBoard::MoveDirection::LEFT);
-    }
+        if(key == GLFW_KEY_A && action == GLFW_PRESS || key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
+            std::cout << "LEFT" << std::endl;
+            mScore += mBoard.Move(GameBoard::MoveDirection::LEFT);
+        }
 
-    if(key == GLFW_KEY_D && action == GLFW_PRESS || key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
-        std::cout << "RIGHT" << std::endl;
-        mScore += mBoard.Move(GameBoard::MoveDirection::RIGHT);
-    }
-    if(mScore > mBestScore) {
-        mBestScore = mScore;
+        if(key == GLFW_KEY_D && action == GLFW_PRESS || key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
+            std::cout << "RIGHT" << std::endl;
+            mScore += mBoard.Move(GameBoard::MoveDirection::RIGHT);
+        }
+        if(mScore > mBestScore) {
+            mBestScore = mScore;
+        }
+        if(!mBoard.AvailableMove()) {
+            mGameHasEnded = true;
+        }
     }
 }
 
 
+void Game2048::LeftMouseClick(double x, double y)
+{
+    RVector<2> coord = { static_cast<float>(x), static_cast<float>(mWindowProperties.height - y) };
+    if(mNewGame.Hit(coord)) {
+        ResetGame();
+    }
+    if(mGameHasEnded && mNewGameEndScreen.Hit(coord)) {
+        ResetGame();
+    }
+}
+
+void Game2048::ResetGame()
+{
+    mGameHasEnded = false;
+    mScore = 0;
+    mBoard.Reset();
+}

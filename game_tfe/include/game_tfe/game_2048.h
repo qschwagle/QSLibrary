@@ -13,6 +13,7 @@
 #include "game_tfe/box_dimension.h"
 #include "game_tfe/game_square.h"
 #include "game_tfe/game_board.h"
+#include "game_tfe/button.h"
 
 struct GLFWwindow;
 
@@ -74,6 +75,10 @@ public:
 
     void ProcessKeyboardInput(int key, int scancode, int action, int mods);
 
+    void LeftMouseClick(double x, double y);
+
+    void ResetGame();
+
 private:
 
     /// holds window properties
@@ -102,6 +107,15 @@ private:
 
     /// score
     unsigned long long mScore{0};
+
+    /// game has ended
+    bool mGameHasEnded{true};
+
+    /// new game button
+    Button mNewGame;
+
+    /// new game end screen button
+    Button mNewGameEndScreen;
 };
 
 #endif //DRAWING_GAME_2048_H
