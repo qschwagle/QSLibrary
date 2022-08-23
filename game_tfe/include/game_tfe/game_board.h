@@ -49,6 +49,8 @@ class GameBoard {
          * adds a new square to an open square
          */
         void AddNewSquare(void);
+
+        void Reset();
     private:
         /// squares
         std::array<GameSquare, 16> mGameSquares;

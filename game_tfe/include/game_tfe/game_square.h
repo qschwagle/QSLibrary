@@ -30,6 +30,7 @@ class GameSquare final {
         GameSquare(const GameSquare&& rhs) {
             mValue = std::move(rhs.mValue);
         }
+
         GameSquare& operator=(const GameSquare&& rhs) {
             mValue = std::move(rhs.mValue);
             mPosition = std::move(rhs.mPosition);

@@ -18,12 +18,7 @@ static constexpr RVector<4> ColorIntToFloat(unsigned char r, unsigned char g, un
 
 GameBoard::GameBoard()
 {
-    std::srand(std::time(0));
-    int rand_1 = std::rand() % 16;
-    int rand_2;
-    while((rand_2 = std::rand() % 16) == rand_1);
-    mGameSquares[rand_1] = std::move(GameSquare(2));
-    mGameSquares[rand_2] = std::move(GameSquare(2));
+    Reset();
 }
 
 
@@ -356,3 +351,20 @@ bool GameBoard::AvailableMove()
     }
     return false;
 }
+
+
+void GameBoard::Reset()
+{
+    for(auto& i: mGameSquares) {
+        i = std::move(GameSquare(0));
+    }
+
+    std::srand(std::time(0));
+    int rand_1 = std::rand() % 16;
+    int rand_2;
+    while((rand_2 = std::rand() % 16) == rand_1);
+    mGameSquares[rand_1] = std::move(GameSquare(2));
+    mGameSquares[rand_2] = std::move(GameSquare(2));
+}
+
+
