@@ -8,6 +8,13 @@
 #include "freetype2/freetype/ftglyph.h"
 #include "freetype2/freetype/ftoutln.h"
 
+static FT_Library library;
+
+static std::mutex freetype_lock;
+ 
+static bool freetype_initialized{false};
+
+
 inline size_t Coords(size_t column, size_t row, size_t width) {
     return row * width + column;
 }
@@ -29,7 +36,6 @@ void compute_string_bbox(FT_BBox *abbox, std::vector<FT_Glyph>& glyphs, std::vec
 
     bbox.xMin = bbox.yMin = 32000;
     bbox.xMax = bbox.yMax = -32000;
-
     for(int n = 0; n < glyphs.size(); ++n) {
         FT_Glyph_Get_CBox(glyphs[n], ft_glyph_bbox_pixels, &glyph_bbox);
         glyph_bbox.xMin += position[n].x;
@@ -54,6 +60,14 @@ void compute_string_bbox(FT_BBox *abbox, std::vector<FT_Glyph>& glyphs, std::vec
         }
     }
 
+    for(int idx = 0; idx < glyphs.size(); ++idx) {
+        FT_Glyph_Get_CBox(glyphs[idx], ft_glyph_bbox_pixels, &glyph_bbox);
+        unsigned int c_height = glyph_bbox.yMax - glyph_bbox.yMin;
+        unsigned int g_height = bbox.yMax - bbox.yMin;
+ 
+        position[idx].y +=  g_height - c_height + glyph_bbox.yMin;
+    }
+
     if(bbox.xMin > bbox.xMax) {
         bbox.xMin = 0;
         bbox.xMax = 0;
@@ -64,11 +78,6 @@ void compute_string_bbox(FT_BBox *abbox, std::vector<FT_Glyph>& glyphs, std::vec
     *abbox = bbox;
 }
 
-static FT_Library library;
-
-static std::mutex freetype_lock;
- 
-static bool freetype_initialized{false};
 
 void DrawText(
         Geometry<9>& out, 
@@ -141,10 +150,12 @@ void DrawText(
             pen_x += delta.x >> 6;
         }
 
-        pos.push_back(FT_Vector { .x = pen_x, .y = pen_y });
         error = FT_Load_Glyph(face, glyph_index, FT_LOAD_DEFAULT);
+
         if(error)
             continue;
+
+        pos.push_back(FT_Vector { .x = pen_x, .y = pen_y });
 
         glyphs.emplace_back();
         error = FT_Get_Glyph(face->glyph, &(glyphs.back()));
@@ -172,13 +183,14 @@ void DrawText(
         FT_Glyph image = glyphs[n];
         FT_Vector pen { .x = pos[n].x, .y = pos[n].y };
 
-        unsigned int x = offset[0] + pos[n].x;
+        signed int x = offset[0] + pos[n].x;
+        signed int y = pos[n].y;
 
         error = FT_Glyph_To_Bitmap(&image, FT_RENDER_MODE_NORMAL, &pen, 0);
         if(!error) {
             FT_BitmapGlyph bit = (FT_BitmapGlyph) image;
 
-            WriteToBuffer(block, out.GetAtlas()->GetWidth(), bit->bitmap, x, 0);
+            WriteToBuffer(block, out.GetAtlas()->GetWidth(), bit->bitmap, x, y);
         }
         FT_Done_Glyph(glyphs[n]);
         FT_Done_Glyph(image);
