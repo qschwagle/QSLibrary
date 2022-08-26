@@ -14,7 +14,6 @@ static std::mutex freetype_lock;
  
 static bool freetype_initialized{false};
 
-
 inline size_t Coords(size_t column, size_t row, size_t width) {
     return row * width + column;
 }
@@ -38,6 +37,7 @@ void compute_string_bbox(FT_BBox *abbox, std::vector<FT_Glyph>& glyphs, std::vec
     bbox.xMax = bbox.yMax = -32000;
     for(int n = 0; n < glyphs.size(); ++n) {
         FT_Glyph_Get_CBox(glyphs[n], ft_glyph_bbox_pixels, &glyph_bbox);
+
         glyph_bbox.xMin += position[n].x;
         glyph_bbox.xMax += position[n].x;
         glyph_bbox.yMin += position[n].y;
@@ -65,7 +65,8 @@ void compute_string_bbox(FT_BBox *abbox, std::vector<FT_Glyph>& glyphs, std::vec
         unsigned int c_height = glyph_bbox.yMax - glyph_bbox.yMin;
         unsigned int g_height = bbox.yMax - bbox.yMin;
  
-        position[idx].y +=  g_height - c_height + glyph_bbox.yMin;
+        //position[idx].y +=  g_height - c_height + glyph_bbox.yMin;
+        position[idx].y += g_height - c_height - glyph_bbox.yMin;
     }
 
     if(bbox.xMin > bbox.xMax) {
@@ -143,7 +144,6 @@ void DrawText(
 
     for(int n = 0; n < text.size(); ++n) {
         FT_UInt glyph_index = FT_Get_Char_Index(face, text[n]);
-
         if(use_kerning && previous && glyph_index) {
             FT_Vector delta;
             FT_Get_Kerning(face, previous, glyph_index, FT_KERNING_DEFAULT, &delta);
