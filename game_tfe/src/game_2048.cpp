@@ -177,8 +177,10 @@ bool Game2048::Init(int argc, char **argv)
                 // if they are the same, we are not using the texture
                 FragColor = Color;
             } else {
-                //FragColor = texture(Texture, TexCoord) * Color;
                 vec4 sampled = vec4(1.0, 1.0, 1.0, texture(Texture, TexCoord).r);
+                if(sampled.a < 0.1) {
+                    discard;
+                }
                 FragColor = Color * sampled;
             }
         }
@@ -209,6 +211,9 @@ bool Game2048::Init(int argc, char **argv)
         return false;
     }
 
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_STENCIL_TEST);
+
     return true;
 }
 
@@ -218,7 +223,7 @@ int Game2048::Run()
 
     while(!glfwWindowShouldClose(mWindow)) {
 
-        mGeometry.CreateTextureAtlas(5000, 5000, sizeof(unsigned char));
+        mGeometry.CreateTextureAtlas(512, 512, sizeof(unsigned char));
 
         RVector<4> board_background = ColorIntToFloat(0xD4, 0xB8, 0x67, 0xFF);
 
@@ -227,7 +232,7 @@ int Game2048::Run()
         float game_board_dimension = (mWindowProperties.height * 0.75f)< (mWindowProperties.width) ? (mWindowProperties.height * 0.75f) : mWindowProperties.width - game_board_margin;
         float window_center_x = mWindowProperties.width / 2.0f;
         float game_board_width_half = game_board_dimension / 2.0f;
-        auto game_board_box_origin = RVector<3>{window_center_x - game_board_width_half, 10.0f, 0.0f};
+        auto game_board_box_origin = RVector<3>{window_center_x - game_board_width_half, 10.0f, -0.1f};
         CreateRectangle3D(mGeometry, game_board_box_origin, board_background, game_board_dimension, game_board_dimension);
 
         RVector<4> game_board_square_background = ColorIntToFloat(0xDD, 0xC1, 0x71, 0xFF);
@@ -246,11 +251,11 @@ int Game2048::Run()
             RVector<4> TEXT_COLOR = {0.0f, 0.0f, 0.0f, 1.0f};
             CreateRectangle3D(mGeometry, game_board_box_origin, TRANSPARENT_WHITE, game_board_dimension, game_board_dimension);
             std::string GAME_OVER = "Game over!";
-            RVector<3> mid_point = { game_board_box_origin[0] + game_board_dimension / 2.0f, game_board_box_origin[1] + game_board_dimension * 2.0f / 3.0f, 0.0f};
+            RVector<3> mid_point = { game_board_box_origin[0] + game_board_dimension / 2.0f, game_board_box_origin[1] + game_board_dimension * 2.0f / 3.0f, -0.6f};
             
             DrawText(mGeometry, nullptr, mid_point, TEXT_COLOR, GAME_OVER, 24, 100, 100, TextAlignment::CENTER);
 
-            RVector<3> below_mid = { game_board_box_origin[0] + game_board_dimension / 2.0f - 150.0f / 2.0f, game_board_box_origin[1] + 3.0f * game_board_dimension / 8.0f, 0.0f };
+            RVector<3> below_mid = { game_board_box_origin[0] + game_board_dimension / 2.0f - 150.0f / 2.0f, game_board_box_origin[1] + 3.0f * game_board_dimension / 8.0f, -0.2f };
 
             RVector<4> BUTTON_BG_COLOR = ColorIntToFloat(0x8F, 0x7A, 0x66, 0xFF);
 
@@ -264,29 +269,29 @@ int Game2048::Run()
 
         float window_scale_x, window_scale_y;
         glfwGetWindowContentScale(mWindow, &window_scale_x, &window_scale_y);
-        unsigned int window_scale_x_int = window_scale_x * 100;
-        unsigned int window_scale_y_int = window_scale_y * 100;
+        unsigned int window_scale_x_int = 100; //window_scale_x * 100;
+        unsigned int window_scale_y_int = 100; // window_scale_y * 100;
 
         auto game_board_box_end = game_board_box_origin + RVector<3>{ game_board_dimension, 0.0f, 0.0f };
         std::string TITLE_2048 = "2048";
 
-        DrawText(mGeometry, nullptr, game_board_box_origin + RVector<3> {0.0f, static_cast<float>(mWindowProperties.height) - 125.0f, 0.0f}, green, TITLE_2048, 48, window_scale_x_int, window_scale_y_int);
+        DrawText(mGeometry, nullptr, game_board_box_origin + RVector<3> {0.0f, static_cast<float>(mWindowProperties.height) - 125.0f, -0.9f}, green, TITLE_2048, 48, window_scale_x_int, window_scale_y_int);
 
         std::string SCORE = "SCORE";
 
-        DrawText(mGeometry, nullptr, game_board_box_end + RVector<3> { -210.0f, static_cast<float>(mWindowProperties.height) - 75.0f, 0.0f}, blue, SCORE, 18, window_scale_x_int, window_scale_y_int);
+        DrawText(mGeometry, nullptr, game_board_box_end + RVector<3> { -210.0f, static_cast<float>(mWindowProperties.height) - 75.0f, -0.8f}, blue, SCORE, 18, window_scale_x_int, window_scale_y_int);
 
         std::string current_score = std::to_string(mScore);
 
-        DrawText(mGeometry, nullptr, game_board_box_end + RVector<3> { -210.0f, static_cast<float>(mWindowProperties.height) - 100.0f, 0.0f}, blue, current_score, 22, window_scale_x_int, window_scale_y_int);
+        DrawText(mGeometry, nullptr, game_board_box_end + RVector<3> { -210.0f, static_cast<float>(mWindowProperties.height) - 100.0f, -0.5f}, blue, current_score, 22, window_scale_x_int, window_scale_y_int);
 
         std::string BEST = "BEST";
 
-        DrawText(mGeometry, nullptr, game_board_box_end + RVector<3> { -100.0f, static_cast<float>(mWindowProperties.height) - 75.0f, 0.0f}, blue, BEST, 18, window_scale_x_int, window_scale_y_int);
+        DrawText(mGeometry, nullptr, game_board_box_end + RVector<3> { -100.0f, static_cast<float>(mWindowProperties.height) - 75.0f, -0.3f}, blue, BEST, 18, window_scale_x_int, window_scale_y_int);
 
         std::string best_score = std::to_string(mBestScore);
 
-        DrawText(mGeometry, nullptr, game_board_box_end + RVector<3> { -100.0f, static_cast<float>(mWindowProperties.height) - 100.0f, 0.0f}, blue, best_score, 22, window_scale_x_int, window_scale_y_int);
+        DrawText(mGeometry, nullptr, game_board_box_end + RVector<3> { -100.0f, static_cast<float>(mWindowProperties.height) - 100.0f, -0.2f}, blue, best_score, 22, window_scale_x_int, window_scale_y_int);
 
         mBuffer.Init();
 

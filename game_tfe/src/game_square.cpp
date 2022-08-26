@@ -34,9 +34,10 @@ void GameSquare::Draw(Geometry<9>& out, float width)
     if(mValue == 0) {
         return;
     }
-    RVector<3> pos = { mPosition[0], mPosition[1], 0.0f };
+
+    RVector<3> pos = { mPosition[0], mPosition[1], -0.5f};
     CreateRectangle3D(out, pos, GREEN, width, width);
-    RVector<3> mid_point = { mPosition[0] + width / 2.0f, mPosition[1] + width / 2.0f, 0.0f };
+    RVector<3> mid_point = { mPosition[0] + width / 2.0f, mPosition[1] + width / 2.0f, -0.7f };
     std::string val_str = std::to_string(mValue);
     DrawText(out, nullptr, mid_point, BLACK, val_str, 14, 100, 100, TextAlignment::CENTER);
 }

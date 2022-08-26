@@ -95,7 +95,7 @@ public:
              */
             unsigned char* GetNextFit(size_t width, size_t height, size_t block_size, std::array<RVector<2>, 4>& tex_coords_out, std::array<size_t, 2>& offset)
             {
-                if(mPosY + height < mHeight) {
+                if(mPosY + height + 5 < mHeight) {
                     // bot left
                     tex_coords_out[0] = RVector<2> { static_cast<float>(mPosX) / mWidth, static_cast<float>(mPosY) / mHeight };
                     // top left
@@ -106,8 +106,8 @@ public:
                     tex_coords_out[3] = RVector<2> { static_cast<float>(mPosX+width) / mWidth, static_cast<float>(mPosY+height) / mHeight };
                     offset[0] = mPosX;
                     offset[1] = mPosY;
-                    mPosY += height;
-                    return &(mData[(mPosY-height)*mWidth]);
+                    mPosY += height + 5;
+                    return &(mData[(mPosY-height-5)*mWidth]);
                 }
                 return nullptr;
             }
