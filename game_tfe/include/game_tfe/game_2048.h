@@ -109,7 +109,7 @@ private:
     unsigned long long mScore{0};
 
     /// game has ended
-    bool mGameHasEnded{true};
+    bool mGameHasEnded{false};
 
     /// new game button
     Button mNewGame;
