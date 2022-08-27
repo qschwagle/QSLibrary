@@ -123,9 +123,9 @@ public:
             size_t mHeight;
 
             /// next free x position
-            size_t mPosX{0};
+            size_t mPosX{50};
             /// next free y position
-            size_t mPosY{0};
+            size_t mPosY{50};
     };
 
     void CreateTextureAtlas(size_t width, size_t height, size_t bytes)

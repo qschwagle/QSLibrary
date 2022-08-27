@@ -173,7 +173,7 @@ bool Game2048::Init(int argc, char **argv)
 
         void main()
         {
-            if(TexCoord[0] == TexCoord[1]) {
+            if(TexCoord[0] == 0.0 && TexCoord[1] == 0.0) {
                 // if they are the same, we are not using the texture
                 FragColor = Color;
             } else {
