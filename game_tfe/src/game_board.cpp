@@ -24,10 +24,9 @@ GameBoard::GameBoard()
 
 void GameBoard::Draw(Geometry<9>& out, RVector<3> position, float width)
 {
-
-    RVector<4> board_background = ColorIntToFloat(0xD4, 0xB8, 0x67, 0xFF);
+    RVector<4> board_background = ColorIntToFloat(0xBB, 0xAD, 0xA0, 0xFF);
     CreateRectangle3D(out, position, board_background, width, width);
-    RVector<4> game_board_square_background = ColorIntToFloat(0xDD, 0xC1, 0x71, 0xFF);
+    RVector<4> game_board_square_background = ColorIntToFloat(0xCD, 0xC1, 0xB4, 0xFF);
     float game_board_margin = 10.0f;
 
     float game_square_width = (width / 4.0f) - 10.0f - 2.50f;

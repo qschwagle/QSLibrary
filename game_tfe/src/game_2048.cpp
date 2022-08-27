@@ -281,19 +281,19 @@ int Game2048::Run()
 
         std::string SCORE = "SCORE";
 
-        DrawText(mGeometry, nullptr, game_board_box_end + RVector<3> { -160.0f, static_cast<float>(mWindowProperties.height) - 35.0f, -0.8f}, blue, SCORE, 12, window_scale_x_int, window_scale_y_int);
+        DrawText(mGeometry, nullptr, game_board_box_end + RVector<3> { -160.0f, static_cast<float>(mWindowProperties.height) - 35.0f, -0.8f}, TITLE_COLOR, SCORE, 12, window_scale_x_int, window_scale_y_int);
 
         std::string current_score = std::to_string(mScore);
 
-        DrawText(mGeometry, nullptr, game_board_box_end + RVector<3> { -160.0f, static_cast<float>(mWindowProperties.height) - 60.0f, -0.5f}, blue, current_score, 22, window_scale_x_int, window_scale_y_int);
+        DrawText(mGeometry, nullptr, game_board_box_end + RVector<3> { -160.0f, static_cast<float>(mWindowProperties.height) - 60.0f, -0.5f}, TITLE_COLOR, current_score, 22, window_scale_x_int, window_scale_y_int);
 
         std::string BEST = "BEST";
 
-        DrawText(mGeometry, nullptr, game_board_box_end + RVector<3> { -50.0f, static_cast<float>(mWindowProperties.height) - 35.0f, -0.3f}, blue, BEST, 12, window_scale_x_int, window_scale_y_int);
+        DrawText(mGeometry, nullptr, game_board_box_end + RVector<3> { -50.0f, static_cast<float>(mWindowProperties.height) - 35.0f, -0.3f}, TITLE_COLOR, BEST, 12, window_scale_x_int, window_scale_y_int);
 
         std::string best_score = std::to_string(mBestScore);
 
-        DrawText(mGeometry, nullptr, game_board_box_end + RVector<3> { -50.0f, static_cast<float>(mWindowProperties.height) - 60.0f, -0.2f}, blue, best_score, 22, window_scale_x_int, window_scale_y_int);
+        DrawText(mGeometry, nullptr, game_board_box_end + RVector<3> { -50.0f, static_cast<float>(mWindowProperties.height) - 60.0f, -0.2f}, TITLE_COLOR, best_score, 22, window_scale_x_int, window_scale_y_int);
         
         std::string NEW_GAME = "New Game";
         RVector<4> BUTTON_BG_COLOR = ColorIntToFloat(0x8F, 0x7A, 0x66, 0xFF);
@@ -345,7 +345,7 @@ int Game2048::Run()
 
         glfwSwapBuffers(mWindow);
 
-        glfwWaitEventsTimeout(0.0001);
+        glfwWaitEventsTimeout(0.001);
     }
     return 0;
 }
