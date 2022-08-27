@@ -389,22 +389,18 @@ void Game2048::ProcessKeyboardInput(int key, int scancode, int action, int mods)
 
     if(!mGameHasEnded) {
         if(key ==  GLFW_KEY_W && action == GLFW_PRESS || key == GLFW_KEY_UP && action == GLFW_PRESS) {
-            std::cout << "UP" << std::endl;
             mScore += mBoard.Move(GameBoard::MoveDirection::UP);
         }
 
         if(key == GLFW_KEY_S && action == GLFW_PRESS || key == GLFW_KEY_DOWN && action == GLFW_PRESS) {
-            std::cout << "DOWN" << std::endl;
             mScore += mBoard.Move(GameBoard::MoveDirection::DOWN);
         }
 
         if(key == GLFW_KEY_A && action == GLFW_PRESS || key == GLFW_KEY_LEFT && action == GLFW_PRESS) {
-            std::cout << "LEFT" << std::endl;
             mScore += mBoard.Move(GameBoard::MoveDirection::LEFT);
         }
 
         if(key == GLFW_KEY_D && action == GLFW_PRESS || key == GLFW_KEY_RIGHT && action == GLFW_PRESS) {
-            std::cout << "RIGHT" << std::endl;
             mScore += mBoard.Move(GameBoard::MoveDirection::RIGHT);
         }
         if(mScore > mBestScore) {
