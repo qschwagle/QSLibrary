@@ -65,8 +65,7 @@ void compute_string_bbox(FT_BBox *abbox, std::vector<FT_Glyph>& glyphs, std::vec
         unsigned int c_height = glyph_bbox.yMax - glyph_bbox.yMin;
         unsigned int g_height = bbox.yMax - bbox.yMin;
  
-        //position[idx].y +=  g_height - c_height + glyph_bbox.yMin;
-        position[idx].y += g_height - c_height - glyph_bbox.yMin;
+        position[idx].y += g_height - c_height;
     }
 
     if(bbox.xMin > bbox.xMax) {

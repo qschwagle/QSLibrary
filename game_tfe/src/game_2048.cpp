@@ -223,7 +223,7 @@ int Game2048::Run()
 
     while(!glfwWindowShouldClose(mWindow)) {
 
-        mGeometry.CreateTextureAtlas(512, 512, sizeof(unsigned char));
+        mGeometry.CreateTextureAtlas(1024, 1024, sizeof(unsigned char));
 
         RVector<4> board_background = ColorIntToFloat(0xD4, 0xB8, 0x67, 0xFF);
 
