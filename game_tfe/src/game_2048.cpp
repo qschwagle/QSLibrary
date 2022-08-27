@@ -233,7 +233,6 @@ int Game2048::Run()
         float window_center_x = mWindowProperties.width / 2.0f;
         float game_board_width_half = game_board_dimension / 2.0f;
         auto game_board_box_origin = RVector<3>{window_center_x - game_board_width_half, 10.0f, -0.1f};
-        CreateRectangle3D(mGeometry, game_board_box_origin, board_background, game_board_dimension, game_board_dimension);
 
         RVector<4> game_board_square_background = ColorIntToFloat(0xDD, 0xC1, 0x71, 0xFF);
 
@@ -259,9 +258,10 @@ int Game2048::Run()
 
             RVector<4> BUTTON_BG_COLOR = ColorIntToFloat(0x8F, 0x7A, 0x66, 0xFF);
 
+            RVector<4> BUTTON_TEXT_COLOR =  ColorIntToFloat(0xFA, 0xF8, 0xEF, 0xFF);
             std::string NEW_GAME = "New Game";
 
-            mNewGameEndScreen.Draw(mGeometry, below_mid, 150.0, 50.0f, BUTTON_BG_COLOR, board_background, 14, NEW_GAME);
+            mNewGameEndScreen.Draw(mGeometry, below_mid, 150.0, 50.0f, BUTTON_BG_COLOR, BUTTON_TEXT_COLOR, 14, NEW_GAME);
         }
 
         RVector<4> green { 0.0f, 1.0f, 0.0f, 1.0f };
@@ -274,24 +274,33 @@ int Game2048::Run()
 
         auto game_board_box_end = game_board_box_origin + RVector<3>{ game_board_dimension, 0.0f, 0.0f };
         std::string TITLE_2048 = "2048";
+        // #776E65
+        RVector<4> TITLE_COLOR = ColorIntToFloat(0x77, 0x6E, 0x65, 0xFF);
 
-        DrawText(mGeometry, nullptr, game_board_box_origin + RVector<3> {0.0f, static_cast<float>(mWindowProperties.height) - 125.0f, -0.9f}, green, TITLE_2048, 48, window_scale_x_int, window_scale_y_int);
+        DrawText(mGeometry, nullptr, game_board_box_origin + RVector<3> {0.0f, static_cast<float>(mWindowProperties.height) - 125.0f, -0.9f}, TITLE_COLOR, TITLE_2048, 48, window_scale_x_int, window_scale_y_int);
 
         std::string SCORE = "SCORE";
 
-        DrawText(mGeometry, nullptr, game_board_box_end + RVector<3> { -210.0f, static_cast<float>(mWindowProperties.height) - 75.0f, -0.8f}, blue, SCORE, 18, window_scale_x_int, window_scale_y_int);
+        DrawText(mGeometry, nullptr, game_board_box_end + RVector<3> { -160.0f, static_cast<float>(mWindowProperties.height) - 35.0f, -0.8f}, blue, SCORE, 12, window_scale_x_int, window_scale_y_int);
 
         std::string current_score = std::to_string(mScore);
 
-        DrawText(mGeometry, nullptr, game_board_box_end + RVector<3> { -210.0f, static_cast<float>(mWindowProperties.height) - 100.0f, -0.5f}, blue, current_score, 22, window_scale_x_int, window_scale_y_int);
+        DrawText(mGeometry, nullptr, game_board_box_end + RVector<3> { -160.0f, static_cast<float>(mWindowProperties.height) - 60.0f, -0.5f}, blue, current_score, 22, window_scale_x_int, window_scale_y_int);
 
         std::string BEST = "BEST";
 
-        DrawText(mGeometry, nullptr, game_board_box_end + RVector<3> { -100.0f, static_cast<float>(mWindowProperties.height) - 75.0f, -0.3f}, blue, BEST, 18, window_scale_x_int, window_scale_y_int);
+        DrawText(mGeometry, nullptr, game_board_box_end + RVector<3> { -50.0f, static_cast<float>(mWindowProperties.height) - 35.0f, -0.3f}, blue, BEST, 12, window_scale_x_int, window_scale_y_int);
 
         std::string best_score = std::to_string(mBestScore);
 
-        DrawText(mGeometry, nullptr, game_board_box_end + RVector<3> { -100.0f, static_cast<float>(mWindowProperties.height) - 100.0f, -0.2f}, blue, best_score, 22, window_scale_x_int, window_scale_y_int);
+        DrawText(mGeometry, nullptr, game_board_box_end + RVector<3> { -50.0f, static_cast<float>(mWindowProperties.height) - 60.0f, -0.2f}, blue, best_score, 22, window_scale_x_int, window_scale_y_int);
+        
+        std::string NEW_GAME = "New Game";
+        RVector<4> BUTTON_BG_COLOR = ColorIntToFloat(0x8F, 0x7A, 0x66, 0xFF);
+        RVector<4> BUTTON_TEXT_COLOR =  ColorIntToFloat(0xFA, 0xF8, 0xEF, 0xFF);
+
+        mNewGame.Draw(mGeometry, game_board_box_end + RVector<3> { -150.0f, static_cast<float>(mWindowProperties.height) - 130.0f, 0.0f }, 150.0f, 50.0f, BUTTON_BG_COLOR, BUTTON_TEXT_COLOR, 14, NEW_GAME);
+
 
         mBuffer.Init();
 
