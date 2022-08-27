@@ -27,6 +27,8 @@ static RVector<4> SIXTEEN_BACKGROUND = ColorIntToFloat(0xF6, 0x96, 0x64, 0xFF);
 static RVector<4> THIRTY_TWO_BACKGROUND = ColorIntToFloat(0xF7, 0x7C, 0x5F, 0xFF);
 static RVector<4> SIXTY_FOUR_BACKGROUND = ColorIntToFloat(0xF7, 0x5F, 0x3B, 0xFF);
 static RVector<4> HUNDRED_TWENTY_EIGHT_BACKGROUND = ColorIntToFloat(0xED, 0xD0, 0x73, 0xFF);
+static RVector<4> TWO_FIFTY_SIX_BACKGROUND = ColorIntToFloat(0xED, 0xCC, 0x62, 0xFF);
+static RVector<4> FIVE_TWELVE_BACKGROUND = ColorIntToFloat(0xED, 0xC9, 0x50, 0xFF);
 
 GameSquare::GameSquare(int value) : mValue{value}
 {
@@ -55,6 +57,12 @@ void GameSquare::Draw(Geometry<9>& out, float width)
     RVector<3> mid_point = { mPosition[0] + width / 2.0f, mPosition[1] + width / 2.0f, -0.7f };
     std::string val_str = std::to_string(mValue);
     switch(mValue) {
+        case 512:
+            CreateRectangle3D(out, pos, FIVE_TWELVE_BACKGROUND, width, width);
+            break;
+        case 256:
+            CreateRectangle3D(out, pos, TWO_FIFTY_SIX_BACKGROUND, width, width);
+            break;
         case 128:
             CreateRectangle3D(out, pos, HUNDRED_TWENTY_EIGHT_BACKGROUND, width, width);
             break;
