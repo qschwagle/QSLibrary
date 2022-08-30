@@ -3,21 +3,10 @@
 #include <mutex>
 #include <iostream>
 
-
-#if WIN32
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include FT_GLYPH_H
 #include FT_OUTLINE_H
-
-
-#else
-#include "freetype2/ft2build.h"
-#include "freetype2/freetype/freetype.h"
-#include "freetype2/freetype/ftglyph.h"
-#include "freetype2/freetype/ftoutln.h"
-
-#endif
 
 static FT_Library library;
 
