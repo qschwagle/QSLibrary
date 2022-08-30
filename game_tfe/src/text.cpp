@@ -3,10 +3,21 @@
 #include <mutex>
 #include <iostream>
 
+
+#if WIN32
+#include <ft2build.h>
+#include FT_FREETYPE_H
+#include FT_GLYPH_H
+#include FT_OUTLINE_H
+
+
+#else
 #include "freetype2/ft2build.h"
 #include "freetype2/freetype/freetype.h"
 #include "freetype2/freetype/ftglyph.h"
 #include "freetype2/freetype/ftoutln.h"
+
+#endif
 
 static FT_Library library;
 
@@ -36,6 +47,7 @@ void compute_string_bbox(FT_BBox *abbox, std::vector<FT_Glyph>& glyphs, std::vec
     bbox.xMin = bbox.yMin = 32000;
     bbox.xMax = bbox.yMax = -32000;
     for(int n = 0; n < glyphs.size(); ++n) {
+
         FT_Glyph_Get_CBox(glyphs[n], ft_glyph_bbox_pixels, &glyph_bbox);
 
         glyph_bbox.xMin += position[n].x;
@@ -61,6 +73,7 @@ void compute_string_bbox(FT_BBox *abbox, std::vector<FT_Glyph>& glyphs, std::vec
     }
 
     for(int idx = 0; idx < glyphs.size(); ++idx) {
+
         FT_Glyph_Get_CBox(glyphs[idx], ft_glyph_bbox_pixels, &glyph_bbox);
         unsigned int c_height = glyph_bbox.yMax - glyph_bbox.yMin;
         unsigned int g_height = bbox.yMax - bbox.yMin;
@@ -117,8 +130,11 @@ void DrawText(
     }
 
     FT_Face face;
-
+#if WIN32
+     error = FT_New_Face( library, "C:/Windows/Fonts/Arial.ttf", 0, &face);
+#else
     error = FT_New_Face( library, "/usr/share/fonts/liberation-mono/LiberationMono-Regular.ttf", 0, &face);
+#endif
     if(error) {
         std::cerr << "DrawText:Error Creating new Face. Exiting" << std::endl;
         std::exit(EXIT_FAILURE);
@@ -180,7 +196,9 @@ void DrawText(
 
     for(int n = 0; n < glyphs.size(); ++n) {
         FT_Glyph image = glyphs[n];
-        FT_Vector pen { .x = pos[n].x, .y = pos[n].y };
+        //FT_Vector pen { .x = pos[n].x, .y = pos[n].y };
+        FT_Vector pen{ .x = 0, .y = 0 };
+
 
         signed int x = offset[0] + pos[n].x;
         signed int y = pos[n].y;
