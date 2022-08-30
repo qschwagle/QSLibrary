@@ -48,7 +48,8 @@ void compute_string_bbox(FT_BBox *abbox, std::vector<FT_Glyph>& glyphs, std::vec
     bbox.xMax = bbox.yMax = -32000;
     for(int n = 0; n < glyphs.size(); ++n) {
 
-        FT_Glyph_Get_CBox(glyphs[n], ft_glyph_bbox_pixels, &glyph_bbox);
+        FT_Glyph_Get_CBox(glyphs[n], FT_GLYPH_BBOX_PIXELS, &glyph_bbox);
+
 
         glyph_bbox.xMin += position[n].x;
         glyph_bbox.xMax += position[n].x;
@@ -131,7 +132,7 @@ void DrawText(
 
     FT_Face face;
 #if WIN32
-     error = FT_New_Face( library, "C:/Windows/Fonts/Arial.ttf", 0, &face);
+     error = FT_New_Face( library, "C:/Windows/Fonts/courbd.ttf", 0, &face);
 #else
     error = FT_New_Face( library, "/usr/share/fonts/liberation-mono/LiberationMono-Regular.ttf", 0, &face);
 #endif
