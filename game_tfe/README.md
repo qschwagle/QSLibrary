@@ -26,9 +26,9 @@ saved between application sessions.
 This clone is meant as a "From Scratch" application. While the original is written for the web with
 html, css, and js, this application is built using C++ and personal libraries: [LinAlg](/linalg/README.md)
 and [Geometry](/geometry/README.md) along with third party libraries [GLFW](https://www.glfw.org/),
-[OpenGL](https://www.opengl.org/), [glad](https://github.com/Dav1dde/glad), and [FreeType](https://freetype.org).
-The foundation was meant to be as barebones as possible without making the application horrifying to
-create.
+[glad](https://github.com/Dav1dde/glad), and [FreeType](https://freetype.org). It is built ontop of
+the [OpenGL Specification](https://www.opengl.org/), The foundation was meant to be as barebones 
+as possible without making the application horrifying to create.
 
 ## How to build
 
