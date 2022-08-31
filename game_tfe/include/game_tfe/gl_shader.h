@@ -1,16 +1,18 @@
-#pragma once
+#ifndef GAME_TFE_GL_SHADER_H
+#define GAME_TFE_GL_SHADER_H
 
 #include <string>
 
 /**
- * handles a gl shader
+ * manages a gl shader
  */
 class GLShader {
-    public:
+public:
+    /** default constructor */
     GLShader()=default;
 
+    /** cleans up gl shader */
     ~GLShader();
-
 
     /** gl shader is not copyable */
     GLShader(const GLShader&)=delete;
@@ -29,8 +31,13 @@ class GLShader {
      * types of shaders
      */
     enum class GLShaderType {
+        /// not a shader
         NONE,
+
+        /// vertex shader
         VERTEX,
+
+        /// fragment shader
         FRAGMENT
     };
 
@@ -50,8 +57,7 @@ class GLShader {
      */
     [[nodiscard]] GLShaderType GetShaderType(void) { return mShaderType; }
 
-    private:
-
+private:
     /// saved src for potential debugging later
     std::string mShaderSrc;
 
@@ -64,3 +70,6 @@ class GLShader {
     /// shader id
     unsigned int mId{0};
 };
+
+#endif // GAME_TFE_GL_SHADER_H
+

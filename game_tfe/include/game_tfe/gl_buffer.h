@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GAME_TFE_GL_BUFFER_H
+#define GAME_TFE_GL_BUFFER_H
 
 #include <cstddef>
 
@@ -101,3 +102,6 @@ private:
     /// texture id
     unsigned int mTextureId{0};
 };
+
+#endif // GAME_TFE_GL_BUFFER_H
+

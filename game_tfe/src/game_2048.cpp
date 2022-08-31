@@ -94,11 +94,6 @@ static void MouseButtonCallback(GLFWwindow* window, int button, int action, int 
     }
 }
 
-Game2048::Game2048()
-{
-
-}
-
 Game2048::~Game2048() noexcept
 {
     if(mWindow) {

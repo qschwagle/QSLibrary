@@ -8,12 +8,28 @@
 #include FT_GLYPH_H
 #include FT_OUTLINE_H
 
+/**
+ * global static library. lock mutex freetype_lock before accessing
+ */
 static FT_Library library;
 
+/**
+ * mutex in front of library
+ */
 static std::mutex freetype_lock;
- 
+
+/**
+ * was the freetype library initialized
+ */
 static bool freetype_initialized{false};
 
+/**
+ * get the position provided the column, row, and width of the row
+ * \param column column 
+ * \param row row
+ * \param width width of the row
+ * \returns integer for position
+ */
 inline size_t Coords(size_t column, size_t row, size_t width) {
     return row * width + column;
 }
@@ -27,7 +43,18 @@ const char* FONT_PATH_HARD_CODED = "C:/Windows/Fonts/courbd.ttf";
 const char* FONT_PATH_HARD_CODED = "/usr/share/fonts/liberation-mono/LiberationMono-Regular.ttf";
 #endif
 
-
+/**
+ * Write to the buffer the bitmap using the buffer_width offsetting by x and y.
+ *
+ * The buffer should be larger than the bitmap. The buffer_width is used to shift to the next row in the buffer when 
+ * at the end of the a bitmap row. x and y is offset inside the buffer itself where it should start drawing
+ *
+ * \param buffer memory buffer written to
+ * \param buffer_width width of row of buffer
+ * \param bitmap bitmap to copy from
+ * \param x x offset inside buffer
+ * \param y y offset inside buffer
+ */
 static void WriteToBuffer(unsigned char* buffer, size_t buffer_width, FT_Bitmap& bitmap, long long x, long long y)
 {
     for(int row = 0; row < bitmap.rows; ++row) {
@@ -37,6 +64,16 @@ static void WriteToBuffer(unsigned char* buffer, size_t buffer_width, FT_Bitmap&
     }
 }
 
+/**
+ * computes the bounding box of the glyphs representing some text
+ *
+ * based on the pseudo code in the freetype tutorial. Modified to shift characters into position. Modified code does
+ * not handle multiline text
+ *
+ * \param abbox out box
+ * \param glyphs glyphs to calculate from
+ * \param position positions of the glyphs
+ */
 void compute_string_bbox(FT_BBox *abbox, std::vector<FT_Glyph>& glyphs, std::vector<FT_Vector>& position)
 {
     FT_BBox bbox;

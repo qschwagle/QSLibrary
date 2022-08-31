@@ -56,4 +56,4 @@ class GameBoard {
         std::array<GameSquare, 16> mGameSquares;
 };
 
-#endif
+#endif //GAME_TFE_GAME_BOARD_H

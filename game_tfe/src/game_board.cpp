@@ -56,6 +56,13 @@ void GameBoard::AddNewSquare(void)
     mGameSquares[loc] = std::move(square);
 }
 
+/**
+ * check to see if the square at row and col can be skipped
+ * \param board board to check
+ * \param col column
+ * \param row row
+ * \returns true if can be skipped, otherwise false
+ */
 static bool SkipSquare(std::array<GameSquare, 16>& board, size_t col, size_t row)
 {
     return board[row * 4 + col].Skip();

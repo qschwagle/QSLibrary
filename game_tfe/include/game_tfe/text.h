@@ -3,7 +3,6 @@
 
 #include <string>
 
-
 #include "linalg/rvector.h"
 #include "geometry/geometry.h"
 
@@ -23,13 +22,19 @@ void DrawText(Geometry<9>& out, RVector<2>* dim_out, RVector<3> coordinate, RVec
  */
 enum class TextAlignment
 {
+    /// center alignment
     CENTER,
+
+    /// left alignment
     LEFT
 };
 
 /**
  * Write the string texture to buffer, generates vertices based around text size, and optionally writes the size to dim_out. 
  * Uses text alignment to align based on coordinate
+ *
+ * based on psuedo code in the FreeType Tutorial. Modified for the requirements of the function
+ *
  * \param out geometry buffer
  * \param dim_out dimensions of the resulting vertices. if nullptr, will ignore it
  * \param coordinate translation coordinates
@@ -40,4 +45,4 @@ enum class TextAlignment
  */
 void DrawText(Geometry<9>& out, RVector<2>* dim_out, RVector<3> coordinate, RVector<4> color, std::string& text, unsigned int pt, unsigned int screen_width, unsigned int screen_height, TextAlignment alignment);
 
-#endif
+#endif // GAME_TFE_TEXT_H

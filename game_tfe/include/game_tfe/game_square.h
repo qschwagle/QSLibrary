@@ -90,4 +90,5 @@ class GameSquare final {
         int mValue{0};
 };
 
-#endif
+#endif //GAME_TFE_GAME_SQUARE_H
+

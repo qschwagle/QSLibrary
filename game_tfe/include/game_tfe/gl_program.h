@@ -1,4 +1,5 @@
-#pragma once
+#ifndef GAME_TFE_GL_PROGRAM_H
+#define GAME_TFE_GL_PROGRAM_H
 
 #include <memory>
 #include <optional>
@@ -86,7 +87,7 @@ class GLProgram {
     [[nodiscard]] std::optional<Uniform> GetUniform(std::string& name);
 
     private:
-
+    /// was the program created
     bool mProgramWasCreated{false};
 
     /// program id
@@ -98,3 +99,6 @@ class GLProgram {
     /// fragment shader loaded in the program
     std::shared_ptr<GLShader> mFragmentShader;
 };
+
+#endif // GAME_TFE_GL_PROGRAM_H
+

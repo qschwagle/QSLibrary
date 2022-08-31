@@ -2,8 +2,8 @@
 // Created by Quinton Schwagle on 8/13/22.
 //
 
-#ifndef DRAWING_GAME_2048_H
-#define DRAWING_GAME_2048_H
+#ifndef GAME_TFE_GAME_2048_H
+#define GAME_TFE_GAME_2048_H
 
 #include <vector>
 
@@ -25,8 +25,10 @@ struct GLFWwindow;
 class Game2048
 {
 public:
-    Game2048();
+    /** default constructor */
+    Game2048()=default;
 
+    /** cleans up glfw */
     virtual ~Game2048() noexcept;
 
     /** not copyable */
@@ -42,26 +44,24 @@ public:
     Game2048& operator=(const Game2048&&)=delete;
 
     /**
-     *
      * Initializes the Program with terminal parameters
      *
-     * @param argc argument count
-     * @param argv argument parameters
-     * @return true is successful. otherwise false
+     * \param argc argument count
+     * \param argv argument parameters
+     * \return true is successful. otherwise false
      */
     bool Init(int argc, char** argv);
 
     /**
-     *
      * The run loop for the program
      *
-     * @return exit status
+     * \return exit status
      */
     int Run();
 
     /**
      * Draw the game
-     * @return 0 for success, any other value for error
+     * \return 0 for success, any other value for error
      */
     int Draw();
 
@@ -73,10 +73,21 @@ public:
         return mWindowProperties;
     }
 
+    /**
+     * Processes keyboard input. Called by KeyCallback ( in the src file )  held by glfw
+     */
     void ProcessKeyboardInput(int key, int scancode, int action, int mods);
 
+    /**
+     * Processes LeftMouseClick. Called by MouseButtonCallback ( in the src file ) held by glfw
+     * \param x x position of click 
+     * \param y y position of click
+     */
     void LeftMouseClick(double x, double y);
 
+    /**
+     * Reset the game to default state without changing best score
+     */
     void ResetGame();
 
 private:
@@ -118,4 +129,4 @@ private:
     Button mNewGameEndScreen;
 };
 
-#endif //DRAWING_GAME_2048_H
+#endif //GAME_TFE_GAME_2048_H
