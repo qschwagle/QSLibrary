@@ -104,8 +104,8 @@ The specific version is FreeType 2.12.1 of this writing.
 
 This project uses GLFW under the zlib/libpng license.
 
-Portions of this software are copyright © 2002-2006 Marcus Geelnard and copyright © 2006-2019 Camilla 
-Löwy. All rights reserved.
+Portions of this software are copyright 2002-2006 Marcus Geelnard and copyright 2006-2019 Camilla 
+Löwy.
 
 The specific version is GLFW 3.3.8 of this writing.
 
