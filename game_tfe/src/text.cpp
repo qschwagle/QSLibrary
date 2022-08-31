@@ -18,6 +18,15 @@ inline size_t Coords(size_t column, size_t row, size_t width) {
     return row * width + column;
 }
 
+/** The font paths are hard coded to courier new bold on windows and liberation mono regular on fedora linux
+ *  if the user does not have the font for their operating system, the game will crash immediately
+ */
+#if WIN32
+const char* FONT_PATH_HARD_CODED = "C:/Windows/Fonts/courbd.ttf";
+#else
+const char* FONT_PATH_HARD_CODED = "/usr/share/fonts/liberation-mono/LiberationMono-Regular.ttf";
+#endif
+
 
 static void WriteToBuffer(unsigned char* buffer, size_t buffer_width, FT_Bitmap& bitmap, long long x, long long y)
 {
@@ -37,7 +46,8 @@ void compute_string_bbox(FT_BBox *abbox, std::vector<FT_Glyph>& glyphs, std::vec
     bbox.xMax = bbox.yMax = -32000;
     for(int n = 0; n < glyphs.size(); ++n) {
 
-        FT_Glyph_Get_CBox(glyphs[n], ft_glyph_bbox_pixels, &glyph_bbox);
+        FT_Glyph_Get_CBox(glyphs[n], FT_GLYPH_BBOX_PIXELS, &glyph_bbox);
+
 
         glyph_bbox.xMin += position[n].x;
         glyph_bbox.xMax += position[n].x;
@@ -119,11 +129,7 @@ void DrawText(
     }
 
     FT_Face face;
-#if WIN32
-     error = FT_New_Face( library, "C:/Windows/Fonts/Arial.ttf", 0, &face);
-#else
-    error = FT_New_Face( library, "/usr/share/fonts/liberation-mono/LiberationMono-Regular.ttf", 0, &face);
-#endif
+    error = FT_New_Face( library, FONT_PATH_HARD_CODED, 0, &face);
     if(error) {
         std::cerr << "DrawText:Error Creating new Face. Exiting" << std::endl;
         std::exit(EXIT_FAILURE);
