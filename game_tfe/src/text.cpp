@@ -39,6 +39,8 @@ inline size_t Coords(size_t column, size_t row, size_t width) {
  */
 #if WIN32
 const char* FONT_PATH_HARD_CODED = "C:/Windows/Fonts/courbd.ttf";
+#elif __APPLE__
+const char* FONT_PATH_HARD_CODED = "/System/Library/Fonts/Courier.ttc";
 #else
 const char* FONT_PATH_HARD_CODED = "/usr/share/fonts/liberation-mono/LiberationMono-Regular.ttf";
 #endif

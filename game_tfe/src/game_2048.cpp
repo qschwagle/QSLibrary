@@ -114,6 +114,7 @@ bool Game2048::Init(int argc, char **argv)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
     mWindow = glfwCreateWindow(mWindowProperties.width, mWindowProperties.height, "2048", NULL, NULL);
 
