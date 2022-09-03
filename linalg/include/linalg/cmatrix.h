@@ -16,7 +16,6 @@
 template<int col, int row>
 class CMatrix {
 public:
-
     CMatrix()=default;
     ~CMatrix()=default;
 
@@ -25,6 +24,15 @@ public:
         auto list_iter = list.begin();
         for(size_t i = 0; i < list.size() && i < col * row; ++i, ++list_iter) {
             mData[i / col][i % col] = *list_iter;
+        }
+    }
+
+    CMatrix(std::initializer_list<std::initializer_list<float>> list)
+    {
+        auto list_iter = list.begin();
+        auto data_iter = mData.begin();
+        for(; list_iter != list.end() && data_iter != mData.end(); ++list_iter, ++data_iter) {
+            *data_iter = *list_iter;
         }
     }
 
@@ -58,27 +66,46 @@ public:
         return row;
     }
 
+    constexpr const CVector<row>& operator[](const size_t idx) const
+    {
+        return mData[idx];
+    }
+
     constexpr CVector<row>& operator[](const size_t idx)
     {
         return mData[idx];
     }
 
-    constexpr CMatrix& operator+(const CMatrix& rhs) noexcept
+    constexpr CMatrix operator+(const CMatrix& rhs) const noexcept
+    {
+        CMatrix<col, row> result;
+        for(size_t i = 0; i < col; ++i) {
+            for(size_t j = 0; j < row; ++j) {
+                result[i][j] = mData[i][j] + rhs[i][j];
+            }
+        }
+        return result;
+    }
+
+    constexpr CMatrix& operator+=(const CMatrix& rhs) noexcept
     {
         for(size_t i = 0; i < col; ++i) {
-            for(size_t j = 0; j < col; ++j) {
+            for(size_t j = 0; j < row; ++j) {
                 mData[i][j] += rhs[i][j];
             }
         }
+        return *this;
     }
 
-    constexpr CMatrix& operator-(const CMatrix& rhs) noexcept
+    constexpr CMatrix operator-(const CMatrix& rhs) const noexcept
     {
+        CMatrix<col, row> result;
         for(size_t i = 0; i < col; ++i) {
             for(size_t j = 0; j < col; ++j) {
-                mData[i][j] -= rhs[i][j];
+                result[i][j] = mData[i][j] - rhs[i][j];
             }
         }
+        return result;
     }
 
     constexpr CMatrix& AddRows(const size_t from, const size_t to) noexcept
@@ -143,7 +170,6 @@ CMatrix<n, n> Identity(void)
 }
 
 inline CMatrix<4, 4> OrthographicProjection(float left, float right, float top, float bottom, float far, float near) {
-
     CMatrix<4,4> out = {
         2 / ( right - left ), 0, 0, 0,
         0, 2 / (top - bottom), 0, 0,

@@ -18,6 +18,17 @@ class RMatrix {
 public:
     RMatrix()=default;
     ~RMatrix()=default;
+
+    RMatrix(std::initializer_list<std::initializer_list<float>> list)
+    {
+        auto list_iter = list.begin();
+        auto data_iter = mData.begin();
+        for(; list_iter != list.end() && data_iter != mData.end(); ++list_iter, ++data_iter) {
+            *data_iter = *list_iter;
+        }
+    }
+
+
     RMatrix(const RMatrix& m) noexcept
     {
         mData = m.mData;
@@ -40,12 +51,17 @@ public:
         return *this;
     }
 
+    constexpr const RVector<col>& operator[](const unsigned long long idx) const noexcept
+    {
+        return mData[idx];
+    }
+
     constexpr RVector<col>& operator[](const unsigned long long idx)
     {
         return mData[idx];
     }
 
-    constexpr RMatrix& operator+(const RMatrix& rhs) noexcept
+    constexpr RMatrix& operator+=(const RMatrix& rhs) noexcept
     {
         for(size_t i = 0; i < row; ++i) {
             for(size_t j = 0; j < col; ++j) {
@@ -55,7 +71,7 @@ public:
         return *this;
     }
 
-    constexpr RMatrix& operator-(const RMatrix& rhs) noexcept
+    constexpr RMatrix& operator-=(const RMatrix& rhs) noexcept
     {
         for(size_t i = 0; i < row; ++i) {
             for(size_t j = 0; j < col; ++j) {
