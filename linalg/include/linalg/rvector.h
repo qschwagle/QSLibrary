@@ -73,35 +73,29 @@ public:
 
     [[nodiscard]] size_t GetSize(void) const noexcept { return length; }
 
-    [[nodiscard]] constexpr float& operator[](const size_t idx)
+    [[nodiscard]] constexpr float& operator[](const size_t idx) noexcept
     {
         return mData[idx];
     }
 
-    [[nodiscard]] constexpr const float& operator[](const size_t idx) const
+    [[nodiscard]] constexpr const float& operator[](const size_t idx) const noexcept
     {
         return mData[idx];
     }
-    /*
-
-    constexpr RVector& operator+(const RVector& rhs)
+    constexpr RVector& operator+=(const RVector& rhs) noexcept
     {
         for(unsigned long long i = 0; i < length; ++i) {
             (*this)[i] += rhs[i];
         }
         return *this;
     }
-    */
-
-    /*
-    constexpr RVector& operator-(const RVector& rhs)
+    constexpr RVector& operator-=(const RVector& rhs) noexcept
     {
         for(size_t i = 0; i < length; ++i) {
             (*this)[i] -= rhs[i];
         }
         return *this;
     }
-    */
 
     [[nodiscard]] constexpr float* GetData() noexcept
     {

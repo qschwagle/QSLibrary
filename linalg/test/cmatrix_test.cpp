@@ -29,3 +29,61 @@ TEST(CMatrix, Identity) {
     ASSERT_FLOAT_EQ(m[2][2], 1.0f);
     ASSERT_FLOAT_EQ(m[3][3], 1.0f);
 }
+
+TEST(CMatrix, OverloadAdditionOperator) {
+    const CMatrix<2,2> m = { {1, 2},
+                       {3, 4} };
+
+    const CMatrix<2,2> m2 = { {5, 6},
+                        {7, 8} };
+
+    const CMatrix<2,2> res = m + m2;
+
+    ASSERT_FLOAT_EQ(res[0][0], 6.0f);
+    ASSERT_FLOAT_EQ(res[0][1], 8.0f);
+    ASSERT_FLOAT_EQ(res[1][0], 10.0f);
+    ASSERT_FLOAT_EQ(res[1][1], 12.0f);
+}
+
+TEST(CMatrix, OverloadAdditionOperator2) {
+    const CMatrix<2,2> m = { 1, 2,
+                       3, 4 };
+
+    const CMatrix<2,2> m2 = { 5, 6,
+                        7, 8 };
+
+    const CMatrix<2,2> res = m + m2;
+
+    ASSERT_FLOAT_EQ(res[0][0], 6.0f);
+    ASSERT_FLOAT_EQ(res[0][1], 8.0f);
+    ASSERT_FLOAT_EQ(res[1][0], 10.0f);
+    ASSERT_FLOAT_EQ(res[1][1], 12.0f);
+}
+
+TEST(CMatrix, OverloadAdditionAssignment) {
+    CMatrix<2,2> m1 = { {-1, 0},
+                        {1, 0} };
+    CMatrix<2,2> m2 = { { 1, 0},
+                        { -1, 0}};
+
+    m1 += m2;
+
+    ASSERT_FLOAT_EQ(m1[0][0], 0.0f);
+    ASSERT_FLOAT_EQ(m1[0][1], 0.0f);
+    ASSERT_FLOAT_EQ(m1[1][0], 0.0f);
+    ASSERT_FLOAT_EQ(m1[1][1], 0.0f);
+}
+
+TEST(CMatrix, OverloadSubtraction) {
+    CMatrix<2,2> m1 = { {-1, -2},
+                        {1, 2} };
+    CMatrix<2,2> m2 = { { 1, 2},
+                        { -1, -2}};
+
+    auto res = m1 - m2;
+
+    ASSERT_FLOAT_EQ(res[0][0], -2.0f);
+    ASSERT_FLOAT_EQ(res[0][1], -4.0f);
+    ASSERT_FLOAT_EQ(res[1][0], 2.0f);
+    ASSERT_FLOAT_EQ(res[1][1], 4.0f);
+}

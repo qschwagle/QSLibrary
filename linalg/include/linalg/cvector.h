@@ -78,8 +78,7 @@ public:
         return mData[idx];
     }
 
-    /*
-    constexpr CVector& operator+(const CVector& rhs)
+    constexpr CVector& operator+=(const CVector& rhs)
     {
         for(size_t i = 0; i < length; ++i) {
             (*this)[i] += rhs[i];
@@ -87,14 +86,13 @@ public:
         return *this;
     }
 
-    constexpr CVector& operator-(const CVector& rhs)
+    constexpr CVector& operator-=(const CVector& rhs)
     {
         for(size_t i = 0; i < length; ++i) {
             (*this)[i] += rhs[i];
         }
         return *this;
     }
-    */
 
     [[nodiscard]] constexpr float* GetData() noexcept
     {
