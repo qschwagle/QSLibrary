@@ -4,6 +4,8 @@
 #include "gtest/gtest.h"
 #include "linalg/cmatrix.h"
 
+using namespace QS::LinAlg;
+
 TEST(CMatrix, Constructor) {
     CMatrix<2,2> m;
 

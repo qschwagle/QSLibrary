@@ -5,6 +5,8 @@
 #include <linalg/rmatrix.h>
 #include "gtest/gtest.h"
 
+using namespace QS::LinAlg;
+
 TEST(RVector, Constructor)
 {
     RVector<2> vec;

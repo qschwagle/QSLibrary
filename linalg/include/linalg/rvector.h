@@ -13,20 +13,20 @@ namespace QS::LinAlg {
     template<int length, typename T = float>
     class RVector;
 
-    template<int length>
-    constexpr RVector<length> operator+(const RVector<length> &lhs, const RVector<length> &rhs) noexcept;
+    template<int length, typename T>
+    constexpr RVector<length, T> operator+(const RVector<length, T> &lhs, const RVector<length, T> &rhs) noexcept;
 
-    template<int length>
-    constexpr RVector<length> operator-(const RVector<length> &lhs, const RVector<length> &rhs) noexcept;
+    template<int length, typename T>
+    constexpr RVector<length, T> operator-(const RVector<length, T> &lhs, const RVector<length, T> &rhs) noexcept;
 
-    template<int length>
-    constexpr float operator*(const RVector<length> &lhs, const RVector<length> &rhs) noexcept;
+    template<int length, typename T>
+    constexpr float operator*(const RVector<length, T> &lhs, const RVector<length, T> &rhs) noexcept;
 
-    template<int length>
-    constexpr RVector<length> operator*(const RVector<length> &lhs, const float scalar);
+    template<int length, typename T>
+    constexpr RVector<length, T> operator*(const RVector<length, T> &lhs, const T scalar);
 
-    template<int length>
-    constexpr RVector<length> operator*(const float scalar, const RVector<length> &rhs);
+    template<int length, typename T>
+    constexpr RVector<length, T> operator*(const T scalar, const RVector<length, T> &rhs);
 
     template<int length, typename T>
     class RVector {
@@ -99,59 +99,59 @@ namespace QS::LinAlg {
             return mData.data();
         }
 
-        friend constexpr RVector<length> operator+<>(const RVector<length> &lhs, const RVector<length> &rhs) noexcept;
+        friend constexpr RVector<length> operator+<>(const RVector<length, T> &lhs, const RVector<length, T> &rhs) noexcept;
 
-        friend constexpr RVector<length> operator-<>(const RVector<length> &lhs, const RVector<length> &rhs) noexcept;
+        friend constexpr RVector<length> operator-<>(const RVector<length, T> &lhs, const RVector<length, T> &rhs) noexcept;
 
-        friend constexpr RVector<length> operator*<>(const RVector<length> &lhs, const float scalar);
+        friend constexpr RVector<length> operator*<>(const RVector<length, T> &lhs, const T scalar);
 
-        friend constexpr RVector<length> operator*<>(const float scalar, const RVector<length> &rhs);
+        friend constexpr RVector<length> operator*<>(const T scalar, const RVector<length, T> &rhs);
 
-        friend constexpr float operator*<length>(const RVector<length> &lhs, const RVector<length> &rhs) noexcept;
+        friend constexpr float operator*<length>(const RVector<length, T> &lhs, const RVector<length, T> &rhs) noexcept;
 
     private:
         /// the vector data
         std::array<float, length> mData;
     };
 
-    template<int length>
-    [[nodiscard]] constexpr RVector<length> operator+(const RVector<length> &lhs, const RVector<length> &rhs) noexcept {
-        RVector<length> out;
+    template<int length, typename T>
+    [[nodiscard]] constexpr RVector<length, T> operator+(const RVector<length, T> &lhs, const RVector<length, T> &rhs) noexcept {
+        RVector<length, T> out;
         for (int i = 0; i < length; ++i) {
             out[i] = lhs[i] + rhs[i];
         }
         return out;
     }
 
-    template<int length>
-    [[nodiscard]] constexpr RVector<length> operator-(const RVector<length> &lhs, const RVector<length> &rhs) noexcept {
-        RVector<length> out;
+    template<int length, typename T>
+    [[nodiscard]] constexpr RVector<length, T> operator-(const RVector<length, T> &lhs, const RVector<length, T> &rhs) noexcept {
+        RVector<length, T> out;
         for (int i = 0; i < length; ++i) {
             out[i] = lhs[i] - rhs[i];
         }
         return out;
     }
 
-    template<int length>
-    [[nodiscard]] constexpr float operator*(const RVector<length> &lhs, const RVector<length> &rhs) noexcept {
-        float out = 0.0f;
+    template<int length, typename T>
+    [[nodiscard]] constexpr T operator*(const RVector<length, T> &lhs, const RVector<length, T> &rhs) noexcept {
+        T out = T();
         for (int i = 0; i < length; ++i) {
             out += lhs[i] * rhs[i];
         }
         return out;
     }
 
-    template<int length>
-    [[nodiscard]] constexpr RVector<length> operator*(const RVector<length> &lhs, const float scalar) {
-        RVector<length> out;
+    template<int length, typename T>
+    [[nodiscard]] constexpr RVector<length, T> operator*(const RVector<length, T> &lhs, const T scalar) {
+        RVector<length, T> out;
         for (int i = 0; i < length; ++i) {
             out[i] = lhs[i] * scalar;
         }
         return out;
     }
 
-    template<int length>
-    [[nodiscard]] constexpr RVector<length> operator*(const float scalar, const RVector<length> &rhs) {
+    template<int length, typename T>
+    [[nodiscard]] constexpr RVector<length, T> operator*(const T scalar, const RVector<length, T> &rhs) {
         return rhs * scalar;
     }
 }

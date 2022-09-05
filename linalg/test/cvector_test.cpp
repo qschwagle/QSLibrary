@@ -4,6 +4,8 @@
 #include "gtest/gtest.h"
 #include "linalg/cvector.h"
 
+using namespace QS::LinAlg;
+
 TEST(CVector, Constructor)
 {
     CVector<2> vec;
