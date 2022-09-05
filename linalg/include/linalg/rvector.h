@@ -8,7 +8,7 @@
 #include <algorithm>
 #include <array>
 
-template<int length>
+template<int length, typename T = float>
 class RVector;
 
 template<int length>
@@ -26,7 +26,7 @@ constexpr RVector<length> operator*(const RVector<length>& lhs, const float scal
 template<int length>
 constexpr RVector<length> operator*(const float scalar, const RVector<length>& rhs);
 
-template<int length>
+template<int length, typename T>
 class RVector {
 public:
     /**
@@ -34,7 +34,7 @@ public:
      */
     constexpr RVector(void)
     {
-        for(auto& i: mData) { i = 0.0f; }
+        for(auto& i: mData) { i = T(); }
     }
 
     constexpr RVector(const RVector& vec)
@@ -53,7 +53,7 @@ public:
         mData = std::move(vec.mData);
     }
 
-    constexpr RVector(std::initializer_list<float> list)
+    constexpr RVector(std::initializer_list<T> list)
     {
         auto list_iter = list.begin();
         auto data_iter = mData.begin();
@@ -71,14 +71,14 @@ public:
         return *this;
     }
 
-    [[nodiscard]] size_t GetSize(void) const noexcept { return length; }
+    [[nodiscard]] size_t GetSize() const noexcept { return length; }
 
-    [[nodiscard]] constexpr float& operator[](const size_t idx) noexcept
+    [[nodiscard]] constexpr T& operator[](const size_t idx) noexcept
     {
         return mData[idx];
     }
 
-    [[nodiscard]] constexpr const float& operator[](const size_t idx) const noexcept
+    [[nodiscard]] constexpr const T& operator[](const size_t idx) const noexcept
     {
         return mData[idx];
     }
@@ -97,12 +97,12 @@ public:
         return *this;
     }
 
-    [[nodiscard]] constexpr float* GetData() noexcept
+    [[nodiscard]] constexpr T* GetData() noexcept
     {
         return mData.data();
     }
 
-    [[nodiscard]] constexpr const float* GetData() const noexcept
+    [[nodiscard]] constexpr const T* GetData() const noexcept
     {
         return mData.data();
     }
@@ -123,7 +123,7 @@ private:
 };
 
 template<int length>
-constexpr RVector<length> operator+(const RVector<length>& lhs, const RVector<length>& rhs) noexcept
+[[nodiscard]] constexpr RVector<length> operator+(const RVector<length>& lhs, const RVector<length>& rhs) noexcept
 {
     RVector<length> out;
     for(int i = 0; i < length; ++i) {
@@ -133,7 +133,7 @@ constexpr RVector<length> operator+(const RVector<length>& lhs, const RVector<le
 }
 
 template<int length>
-constexpr RVector<length> operator-(const RVector<length>& lhs, const RVector<length>& rhs) noexcept
+[[nodiscard]] constexpr RVector<length> operator-(const RVector<length>& lhs, const RVector<length>& rhs) noexcept
 {
     RVector<length> out;
     for(int i = 0; i < length; ++i) {
@@ -143,7 +143,7 @@ constexpr RVector<length> operator-(const RVector<length>& lhs, const RVector<le
 }
 
 template<int length>
-constexpr float operator*(const RVector<length>& lhs, const RVector<length>& rhs) noexcept
+[[nodiscard]] constexpr float operator*(const RVector<length>& lhs, const RVector<length>& rhs) noexcept
 {
     float out = 0.0f;
     for(int i = 0; i < length; ++i) {
@@ -153,7 +153,7 @@ constexpr float operator*(const RVector<length>& lhs, const RVector<length>& rhs
 }
 
 template<int length>
-constexpr RVector<length> operator*(const RVector<length>& lhs, const float scalar)
+[[nodiscard]] constexpr RVector<length> operator*(const RVector<length>& lhs, const float scalar)
 {
     RVector<length> out;
     for(int i = 0; i < length; ++i) {
@@ -163,7 +163,7 @@ constexpr RVector<length> operator*(const RVector<length>& lhs, const float scal
 }
 
 template<int length>
-constexpr RVector<length> operator*(const float scalar, const RVector<length>& rhs)
+[[nodiscard]] constexpr  RVector<length> operator*(const float scalar, const RVector<length>& rhs)
 {
     return rhs * scalar;
 }
