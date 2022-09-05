@@ -20,7 +20,7 @@ namespace QS::LinAlg {
     constexpr RVector<length, T> operator-(const RVector<length, T> &lhs, const RVector<length, T> &rhs) noexcept;
 
     template<int length, typename T>
-    constexpr float operator*(const RVector<length, T> &lhs, const RVector<length, T> &rhs) noexcept;
+    constexpr T operator*(const RVector<length, T> &lhs, const RVector<length, T> &rhs) noexcept;
 
     template<int length, typename T>
     constexpr RVector<length, T> operator*(const RVector<length, T> &lhs, const T scalar);
@@ -99,19 +99,19 @@ namespace QS::LinAlg {
             return mData.data();
         }
 
-        friend constexpr RVector<length> operator+<>(const RVector<length, T> &lhs, const RVector<length, T> &rhs) noexcept;
+        friend constexpr RVector<length, T> operator+<>(const RVector<length, T> &lhs, const RVector<length, T> &rhs) noexcept;
 
-        friend constexpr RVector<length> operator-<>(const RVector<length, T> &lhs, const RVector<length, T> &rhs) noexcept;
+        friend constexpr RVector<length, T> operator-<>(const RVector<length, T> &lhs, const RVector<length, T> &rhs) noexcept;
 
-        friend constexpr RVector<length> operator*<>(const RVector<length, T> &lhs, const T scalar);
+        friend constexpr RVector<length, T> operator*<>(const RVector<length, T> &lhs, const T scalar);
 
-        friend constexpr RVector<length> operator*<>(const T scalar, const RVector<length, T> &rhs);
+        friend constexpr RVector<length, T> operator*<>(const T scalar, const RVector<length, T> &rhs);
 
-        friend constexpr float operator*<length>(const RVector<length, T> &lhs, const RVector<length, T> &rhs) noexcept;
+        friend constexpr T operator*<length>(const RVector<length, T> &lhs, const RVector<length, T> &rhs) noexcept;
 
     private:
         /// the vector data
-        std::array<float, length> mData;
+        std::array<T, length> mData;
     };
 
     template<int length, typename T>
