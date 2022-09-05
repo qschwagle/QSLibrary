@@ -20,7 +20,7 @@ class GameBoard {
          * \param position position of the board\
          * \param width width the board should be
          */
-        void Draw(Geometry<9>& out, RVector<3> position, float width);
+        void Draw(Geometry<9>& out, QS::LinAlg::RVector<3> position, float width);
 
         /**
          * movement directions applied to the board

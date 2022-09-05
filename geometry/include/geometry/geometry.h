@@ -93,17 +93,17 @@ public:
              * \param tex_coords_out output tex coords
              * \returns pointer to position or nullptr if not found
              */
-            unsigned char* GetNextFit(size_t width, size_t height, size_t block_size, std::array<RVector<2>, 4>& tex_coords_out, std::array<size_t, 2>& offset)
+            unsigned char* GetNextFit(size_t width, size_t height, size_t block_size, std::array<QS::LinAlg::RVector<2>, 4>& tex_coords_out, std::array<size_t, 2>& offset)
             {
                 if(mPosY + height + 5 < mHeight) {
                     // bot left
-                    tex_coords_out[0] = RVector<2> { static_cast<float>(mPosX) / mWidth, static_cast<float>(mPosY) / mHeight };
+                    tex_coords_out[0] = QS::LinAlg::RVector<2> { static_cast<float>(mPosX) / mWidth, static_cast<float>(mPosY) / mHeight };
                     // top left
-                    tex_coords_out[1] = RVector<2> { static_cast<float>(mPosX) / mWidth, static_cast<float>(mPosY+height) / mHeight };
+                    tex_coords_out[1] = QS::LinAlg::RVector<2> { static_cast<float>(mPosX) / mWidth, static_cast<float>(mPosY+height) / mHeight };
                     // bot right
-                    tex_coords_out[2] = RVector<2> { static_cast<float>(mPosX+width) / mWidth, static_cast<float>(mPosY) / mHeight };
+                    tex_coords_out[2] = QS::LinAlg::RVector<2> { static_cast<float>(mPosX+width) / mWidth, static_cast<float>(mPosY) / mHeight };
                     // top right
-                    tex_coords_out[3] = RVector<2> { static_cast<float>(mPosX+width) / mWidth, static_cast<float>(mPosY+height) / mHeight };
+                    tex_coords_out[3] = QS::LinAlg::RVector<2> { static_cast<float>(mPosX+width) / mWidth, static_cast<float>(mPosY+height) / mHeight };
                     offset[0] = mPosX;
                     offset[1] = mPosY;
                     mPosY += height + 5;
@@ -154,7 +154,7 @@ public:
      * Add the vertex to the sequence of vertices
      * @param vertex
      */
-    void AddVertex(const RVector<length> vertex) noexcept 
+    void AddVertex(const QS::LinAlg::RVector<length> vertex) noexcept
     {
         mVertices.emplace_back(vertex);
     }
@@ -234,21 +234,21 @@ private:
     std::vector<unsigned int> mIndices;
 
     /// vertices
-    std::vector<RVector<length>> mVertices;
+    std::vector<QS::LinAlg::RVector<length>> mVertices;
 
     /// texture atlas
     std::unique_ptr<TextureAtlas> mAtlas;
 };
 
 template<int length>
-void CreateRectangle3D(Geometry<length>& out, RVector<3> translation, RVector<4> color, float width, float height)
+void CreateRectangle3D(Geometry<length>& out, QS::LinAlg::RVector<3> translation, QS::LinAlg::RVector<4> color, float width, float height)
 {
     size_t vertices_count = out.GetVerticesCount();
 
-    out.AddVertex(RVector<length>{translation[0], translation[1], translation[2], color[0], color[1], color[2], color[3]});
-    out.AddVertex(RVector<length>{translation[0], translation[1]+height, translation[2], color[0], color[1], color[2], color[3]});
-    out.AddVertex(RVector<length>{translation[0]+width, translation[1], translation[2], color[0], color[1], color[2], color[3]});
-    out.AddVertex(RVector<length>{translation[0]+width, translation[1]+height, translation[2], color[0], color[1], color[2], color[3]});
+    out.AddVertex(QS::LinAlg::RVector<length>{translation[0], translation[1], translation[2], color[0], color[1], color[2], color[3]});
+    out.AddVertex(QS::LinAlg::RVector<length>{translation[0], translation[1]+height, translation[2], color[0], color[1], color[2], color[3]});
+    out.AddVertex(QS::LinAlg::RVector<length>{translation[0]+width, translation[1], translation[2], color[0], color[1], color[2], color[3]});
+    out.AddVertex(QS::LinAlg::RVector<length>{translation[0]+width, translation[1]+height, translation[2], color[0], color[1], color[2], color[3]});
 
     // lower triangle
     out.AddIndex(vertices_count+1);
@@ -264,22 +264,22 @@ void CreateRectangle3D(Geometry<length>& out, RVector<3> translation, RVector<4>
 template<int length>
 void CreateRectangle3D(
         Geometry<length>& out, 
-        RVector<3> translation, 
-        RVector<4> color, 
+        QS::LinAlg::RVector<3> translation,
+        QS::LinAlg::RVector<4> color,
         float width, 
         float height,
-        RVector<2> tex_coords_bot_left,
-        RVector<2> tex_coords_top_left,
-        RVector<2> tex_coords_bot_right,
-        RVector<2> tex_coords_top_right
+        QS::LinAlg::RVector<2> tex_coords_bot_left,
+        QS::LinAlg::RVector<2> tex_coords_top_left,
+        QS::LinAlg::RVector<2> tex_coords_bot_right,
+        QS::LinAlg::RVector<2> tex_coords_top_right
         ) 
 {
     size_t vertices_count = out.GetVerticesCount();
 
-    out.AddVertex(RVector<length>{translation[0], translation[1], translation[2], color[0], color[1], color[2], color[3], tex_coords_bot_left[0], tex_coords_bot_left[1]});
-    out.AddVertex(RVector<length>{translation[0], translation[1]+height, translation[2], color[0], color[1], color[2], color[3], tex_coords_top_left[0], tex_coords_top_left[1]});
-    out.AddVertex(RVector<length>{translation[0]+width, translation[1], translation[2], color[0], color[1], color[2], color[3], tex_coords_bot_right[0], tex_coords_bot_right[1]});
-    out.AddVertex(RVector<length>{translation[0]+width, translation[1]+height, translation[2], color[0], color[1], color[2], color[3], tex_coords_top_right[0], tex_coords_top_right[1]});
+    out.AddVertex(QS::LinAlg::RVector<length>{translation[0], translation[1], translation[2], color[0], color[1], color[2], color[3], tex_coords_bot_left[0], tex_coords_bot_left[1]});
+    out.AddVertex(QS::LinAlg::RVector<length>{translation[0], translation[1]+height, translation[2], color[0], color[1], color[2], color[3], tex_coords_top_left[0], tex_coords_top_left[1]});
+    out.AddVertex(QS::LinAlg::RVector<length>{translation[0]+width, translation[1], translation[2], color[0], color[1], color[2], color[3], tex_coords_bot_right[0], tex_coords_bot_right[1]});
+    out.AddVertex(QS::LinAlg::RVector<length>{translation[0]+width, translation[1]+height, translation[2], color[0], color[1], color[2], color[3], tex_coords_top_right[0], tex_coords_top_right[1]});
 
     // lower triangle
     out.AddIndex(vertices_count+1);

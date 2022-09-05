@@ -8,6 +8,8 @@
 #include FT_GLYPH_H
 #include FT_OUTLINE_H
 
+using namespace QS::LinAlg;
+
 /**
  * global static library. lock mutex freetype_lock before accessing
  */

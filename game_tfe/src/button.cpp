@@ -2,6 +2,8 @@
 
 #include "game_tfe/text.h"
 
+using namespace QS::LinAlg;
+
 void Button::Draw(Geometry<9>& out, RVector<3> position, float width, float height, RVector<4> bg, RVector<4> color, int pt, std::string& text)
 {
     mDimensions = { width, height };

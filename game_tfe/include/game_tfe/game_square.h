@@ -61,19 +61,19 @@ class GameSquare final {
          * Gets the current position
          * \returns position of the square
          */
-        RVector<2>& GetPosition(void) noexcept { return mPosition; }
+        QS::LinAlg::RVector<2>& GetPosition(void) noexcept { return mPosition; }
 
         /**
          * Gets a constant position
          * \returns positon of the square
          */
-        const RVector<2>& GetPosition(void) const noexcept { return mPosition; } 
+        const QS::LinAlg::RVector<2>& GetPosition(void) const noexcept { return mPosition; }
 
         /**
          * set position of the square
          * \param position of the square
          */
-        void SetPosition(const RVector<2>& position) { mPosition = position; }
+        void SetPosition(const QS::LinAlg::RVector<2>& position) { mPosition = position; }
 
         /**
          * Draw the square
@@ -84,7 +84,7 @@ class GameSquare final {
 
     private:
         /// game square position
-        RVector<2> mPosition;
+        QS::LinAlg::RVector<2> mPosition;
 
         /// value of the square
         int mValue{0};

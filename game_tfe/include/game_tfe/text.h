@@ -15,7 +15,7 @@
  * \param text text to be written
  * \param pt point font size
  */
-void DrawText(Geometry<9>& out, RVector<2>* dim_out, RVector<3> coordinate, RVector<4> color, std::string& text, unsigned int pt, unsigned int screen_width, unsigned int screen_height);
+void DrawText(Geometry<9>& out, QS::LinAlg::RVector<2>* dim_out, QS::LinAlg::RVector<3> coordinate, QS::LinAlg::RVector<4> color, std::string& text, unsigned int pt, unsigned int screen_width, unsigned int screen_height);
 
 /**
  * Text alignment setting
@@ -43,6 +43,6 @@ enum class TextAlignment
  * \param pt point font size
  * \param alignment text alignment
  */
-void DrawText(Geometry<9>& out, RVector<2>* dim_out, RVector<3> coordinate, RVector<4> color, std::string& text, unsigned int pt, unsigned int screen_width, unsigned int screen_height, TextAlignment alignment);
+void DrawText(Geometry<9>& out, QS::LinAlg::RVector<2>* dim_out, QS::LinAlg::RVector<3> coordinate, QS::LinAlg::RVector<4> color, std::string& text, unsigned int pt, unsigned int screen_width, unsigned int screen_height, TextAlignment alignment);
 
 #endif // GAME_TFE_TEXT_H

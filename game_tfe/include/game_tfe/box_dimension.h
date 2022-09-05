@@ -14,10 +14,10 @@ struct BoxDimension {
     int height{0};
 
     /// margin of the box: UP RIGHT BOTTOM LEFT
-    RVector<4> margin{0, 0, 0, 0};
+    QS::LinAlg::RVector<4> margin{0, 0, 0, 0};
 
     /// position of the box: X, Y
-    RVector<2> position{0, 0};
+    QS::LinAlg::RVector<2> position{0, 0};
 };
 
 #endif //GAME_EFT_BOX_DIMENSIONS_H

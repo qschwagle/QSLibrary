@@ -21,21 +21,21 @@ class Button {
          * \param color color of text
          * \param message message to be displayed
          */
-        void Draw(Geometry<9>& out, RVector<3> position, float width, float height, RVector<4> bg, RVector<4> color, int pt, std::string& text);
+        void Draw(Geometry<9>& out, QS::LinAlg::RVector<3> position, float width, float height, QS::LinAlg::RVector<4> bg, QS::LinAlg::RVector<4> color, int pt, std::string& text);
 
         /**
          * checks whether the value hit the button based on the position supplied
          * \param pos position hit
          * \returns true if hit, otherwise false
          */
-        bool Hit(const RVector<2>& pos);
+        bool Hit(const QS::LinAlg::RVector<2>& pos);
 
     private:
         /// last dimensions generated width / height of the box
-        RVector<2> mDimensions;
+        QS::LinAlg::RVector<2> mDimensions;
 
         /// last position drawn
-        RVector<2> mPosition;
+        QS::LinAlg::RVector<2> mPosition;
 };
 
 

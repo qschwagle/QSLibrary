@@ -5,6 +5,8 @@
 
 #include "game_tfe/text.h"
 
+using namespace QS::LinAlg;
+
 /**
  * converts from 0-255 int to float 0.0f to 1.0f
  * \param r red
