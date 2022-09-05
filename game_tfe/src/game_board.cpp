@@ -360,7 +360,6 @@ bool GameBoard::AvailableMove()
     return false;
 }
 
-
 void GameBoard::Reset()
 {
     for(auto& i: mGameSquares) {
@@ -375,4 +374,18 @@ void GameBoard::Reset()
     mGameSquares[rand_2] = std::move(GameSquare(2));
 }
 
+bool GameBoard::SetSquare(const size_t pos, GameSquare&& square)
+{
+    if(0 <= pos && pos < 16) {
+        mGameSquares[pos] = std::move(square);
+
+        return true;
+    }
+    return false;
+}
+
+const GameSquare& GameBoard::GetGameSquare(const size_t pos)
+{
+    return mGameSquares[pos];
+}
 

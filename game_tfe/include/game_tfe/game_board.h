@@ -43,14 +43,30 @@ class GameBoard {
          * checks all directions for an available move
          * \returns false if none exist, otherwise true
          */
-        bool AvailableMove(void);
+        bool AvailableMove();
 
         /**
          * adds a new square to an open square
          */
-        void AddNewSquare(void);
+        void AddNewSquare();
 
         void Reset();
+
+        /**
+         * set the square at the specified position. Checks for boundaries. Used only for testing
+         * \param pos
+         * \param square
+         * \returns true if successful, otherwise false
+         */
+        bool SetSquare(size_t pos, GameSquare&& square);
+
+        /**
+         * retrieves a const reference to the game square at pos. Does not check boundaries
+         *
+         * \param pos position to get square
+         * \return square at pos
+         */
+        const GameSquare& GetGameSquare(size_t pos);
     private:
         /// squares
         std::array<GameSquare, 16> mGameSquares;

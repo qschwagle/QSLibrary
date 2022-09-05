@@ -82,6 +82,14 @@ class GameSquare final {
          */
         void Draw(Geometry<9>& out, float width);
 
+        /**
+         * Get the value of the square. Only used for testing
+         * @return value of the square
+         */
+        int GetValue() const noexcept {
+            return mValue;
+        }
+
     private:
         /// game square position
         QS::LinAlg::RVector<2> mPosition;
