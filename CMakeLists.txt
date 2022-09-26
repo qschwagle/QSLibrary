@@ -11,6 +11,8 @@ add_subdirectory(cpp_scaffold)
 
 add_subdirectory(game_tfe)
 
+add_subdirectory(game_project_a)
+
 include(FetchContent)
 FetchContent_Declare(
         googletest
