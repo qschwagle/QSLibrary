@@ -1,6 +1,6 @@
 set(SRC_MAIN src/main.cpp)
 set(SRC src/game.cpp)
-set(INCLUDE_FILES include/game_project_a/game.h)
+set(INCLUDE_FILES include/game_project_a/game.h include/game_project_a/logger.h)
 
 add_executable(game_project_a ${SRC_MAIN} ${SRC} ${INCLUDE_FILES})
 
