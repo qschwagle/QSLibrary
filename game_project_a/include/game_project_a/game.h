@@ -5,6 +5,8 @@
 
 #include "game_project_a/logger.h"
 
+struct GLFWwindow;
+
 /**
  * Game Program Class
  *
@@ -16,8 +18,17 @@ public:
     /**
      * constructor
      */
-    Game()=default;
+    Game() noexcept;
 
+    /**
+     * destructor
+     */
+    ~Game();
+
+    /**
+     * Set the logger for the application. A default is used if not called
+     * @param logger logger for application
+     */
     void SetLogger(std::unique_ptr<Logger> logger) noexcept
     {
         mLogger = std::move(logger);
@@ -40,6 +51,12 @@ public:
 private:
     /// logger used by the game
     std::unique_ptr<Logger> mLogger{std::make_unique<Logger>()};
+
+    /// was glfw properly initialized?
+    bool mGLFWInitialized{false};
+
+    /// window handle
+    GLFWwindow* mWindow{nullptr};
 };
 
 
